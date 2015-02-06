@@ -1,0 +1,35 @@
+====================================================================
+##### (1)	Workspace Setup #####
+====================================================================
+1) Change File 'pom.xml' in Project 'com.dbs.portal.ui.parent' as below:
+	a) find Tag		<war.outputDirectory>E:/DBS/FAST/build/</war.outputDirectory>	
+	b) and update the value to your build path
+2) Change File '.classpath' in Project 'com.dbs.portal.ui.MaskedTextField' as below:
+	a) find		<classpathentry kind="lib" path="E:/DBS/FAST/workspace/com.dbs.portal.ui.MaskedTextField/lib/animator-1.6.6.jar"/> and 	<classpathentry kind="lib" path="E:/DBS/FAST/workspace/com.dbs.portal.ui.MaskedTextField/lib/fastlayouts-1.0.jar"/>
+	b) update both paths to point to your location 
+
+====================================================================
+##### (2)	Data Source Setup #####
+====================================================================
+Find File 'db.properties' in project com.dbs.fast.db.bean
+	-- find jdbc=jdbc:sqlserver://10.200.144.216;databaseName=FAST_SAMPLE;CharacterSet=UTF-8 and change 'databaseName' to your DataBase name if necessary
+(Noted: userName and password is encrypted as smwadmin with password.)
+
+---------------------------------------------------------------------
+if there is no sqlserver sqljdbc4-4.0.jar, try to execute following command:
+
+	mvn install:install-file -Dfile=sqljdbc4.jar -Dpackaging=jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.0
+
+or update your maven repository with jar file in 'resource'
+
+====================================================================
+##### (3)	Project Build Dependency #####
+====================================================================
+Step by Step as below:
+1)	build Project 'CommonTools' with maven file - 'pom.xml'
+2)	build Project 'db.parent' with maven file - 'pom.xml'
+3)	build Project 'com.dbs.portal.ui.parent' with maven file - 'pom.xml'
+
+If there are more than one UI projects, add new project in File 'pom.xml' in Project 'com.dbs.portal.ui.parent'. 
+1) Find Tag <modules> in 'pom.xml'
+2) add new Tag <module> {your project name} </module>

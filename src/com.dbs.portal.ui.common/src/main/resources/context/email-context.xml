@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:http="http://www.springframework.org/schema/integration/http"
+	xmlns:jms="http://www.springframework.org/schema/integration/jms"
+	xmlns:httpinvoker="http://www.springframework.org/schema/integration/httpinvoker"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/integration
+	http://www.springframework.org/schema/integration/spring-integration-2.0.xsd
+	http://www.springframework.org/schema/integration/http
+	http://www.springframework.org/schema/integration/http/spring-integration-http-2.0.xsd
+	http://www.springframework.org/schema/integration/jms
+	http://www.springframework.org/schema/integration/jms/spring-integration-jms-2.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+
+
+	<!-- <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+		<property name="locations">
+			<list>
+			 	 <value>classpath:properties/common.properties</value>
+			</list>
+		</property>
+	</bean> -->
+
+	<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
+	
+	<util:list id="emailContent" scope="prototype">
+		<list>
+			<bean class="com.dbs.portal.ui.component.view.FormField">
+				<constructor-arg name="fieldType" value="RADIO_BUTTON_GROUP" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+				<constructor-arg name="fieldNameKey" value="email.criteria.sendEmailCopyToOriginator"/>
+				<constructor-arg name="dataId">
+					<util:constant static-field="com.dbs.portal.constants.OnlineTerminalReportConstant.SEND_TO_ORIGINATOR"/>
+				</constructor-arg>
+				<property name="dataProvider" ref="yesNoDataProvider"/>
+				<property name="columnSpan" value="12"/>
+			</bean>
+		</list>
+		<list>
+			<bean class="com.dbs.portal.ui.component.view.FormField">
+				<constructor-arg name="fieldType" value="TEXTFIELD" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+				<constructor-arg name="fieldNameKey" value="email.criteria.originatorsEmailAddress"/>
+				<constructor-arg name="dataId">
+					<util:constant static-field="com.dbs.portal.constants.OnlineTerminalReportConstant.ORIGINATOR_EMAIL_ADDRESS"/>
+				</constructor-arg>
+				<property name="columnSpan" value="40"/>
+				<property name="dataAsTextKey" value="false"/>
+				<property name="upperCase" value="false"/>
+			</bean>
+		</list>
+		<list>
+		    <bean class="com.dbs.portal.ui.component.view.FormField">
+				<constructor-arg name="fieldType" value="COMBOBOX" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+				<constructor-arg name="fieldNameKey" value="email.criteria.emailTo"/>
+				<constructor-arg name="dataId">
+					<util:constant static-field="com.dbs.portal.constants.OnlineTerminalReportConstant.TO_EMAIL_ADDRESSES"/>
+				</constructor-arg>
+				<property name="columnSpan" value="28"/>
+			</bean>
+		</list>
+		<list>
+			<bean class="com.dbs.portal.ui.component.view.FormField">
+				<constructor-arg name="fieldType" value="TEXTAREA" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+				<constructor-arg name="fieldNameKey" value="email.criteria.additional"/>
+				<constructor-arg name="dataId">
+					<util:constant static-field="com.dbs.portal.constants.OnlineTerminalReportConstant.TO_ADDITIONAL"/>
+				</constructor-arg>
+				<property name="columnSpan" value="40"/>
+				<property name="dataAsTextKey" value="false"/>
+				<property name="upperCase" value="false"/>
+			</bean>
+		</list>
+		<list>
+		    <bean class="com.dbs.portal.ui.component.view.FormField">
+				<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+				<constructor-arg name="fieldNameKey" value=""/>
+				<constructor-arg name="dataId" value=""/>
+				<property name="columnSpan" value="13"/>
+			</bean>
+		    <bean class="com.dbs.portal.ui.component.view.FormField">
+				<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+				<constructor-arg name="fieldNameKey" value="email.criteria.additional.note"/>
+				<constructor-arg name="dataId" value=""/>
+				<property name="columnSpan" value="28"/>
+			</bean>
+		</list>
+		<list>
+		    <bean class="com.dbs.portal.ui.component.view.FormField">
+				<constructor-arg name="fieldType" value="COMBOBOX" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+				<constructor-arg name="fieldNameKey" value="email.criteria.emailCC"/>
+				<constructor-arg name="dataId">
+					<util:constant static-field="com.dbs.portal.constants.OnlineTerminalReportConstant.CC_EMAIL_ADDRESSES"/>
+				</constructor-arg>
+				<property name="columnSpan" value="28"/>
+			</bean>
+		</list>
+		<list>
+			<bean class="com.dbs.portal.ui.component.view.FormField">
+				<constructor-arg name="fieldType" value="TEXTAREA" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+				<constructor-arg name="fieldNameKey" value="email.criteria.additional"/>
+				<constructor-arg name="dataId">
+					<util:constant static-field="com.dbs.portal.constants.OnlineTerminalReportConstant.CC_ADDITIONAL"/>
+				</constructor-arg>
+				<property name="columnSpan" value="40"/>
+				<property name="dataAsTextKey" value="false"/>
+				<property name="upperCase" value="false"/>
+			</bean>
+		</list>
+		<list>
+		    <bean class="com.dbs.portal.ui.component.view.FormField">
+				<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+				<constructor-arg name="fieldNameKey" value=""/>
+				<constructor-arg name="dataId" value=""/>
+				<property name="columnSpan" value="13"/>
+			</bean>
+		    <bean class="com.dbs.portal.ui.component.view.FormField">
+				<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+				<constructor-arg name="fieldNameKey" value="email.criteria.additional.note"/>
+				<constructor-arg name="dataId" value=""/>
+				<property name="columnSpan" value="28"/>
+			</bean>
+		</list>
+		<list>
+			<bean class="com.dbs.portal.ui.component.view.FormField">
+				<constructor-arg name="fieldType" value="TEXTFIELD" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+				<constructor-arg name="fieldNameKey" value="email.criteria.replyPhoneNumber"/>
+				<constructor-arg name="dataId">
+					<util:constant static-field="com.dbs.portal.constants.OnlineTerminalReportConstant.REPLY_PHONE_NUMBER"/>
+				</constructor-arg>
+				<property name="columnSpan" value="12"/>
+				<property name="dataAsTextKey" value="false"/>
+				<property name="upperCase" value="false"/>
+				<property name="validationLists">
+					<list>
+						<list>
+							<value type="com.dbs.portal.ui.validator.ValidationType">Integer</value>
+							<value>email.validation.phone</value>
+						</list>
+					</list>
+				</property>
+			</bean>
+		</list>
+		<list>
+			<bean class="com.dbs.portal.ui.component.view.FormField">
+				<constructor-arg name="fieldType" value="TEXTFIELD" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+				<constructor-arg name="fieldNameKey" value="email.criteria.replyFaxNumber"/>
+				<constructor-arg name="dataId">
+					<util:constant static-field="com.dbs.portal.constants.OnlineTerminalReportConstant.REPLY_FAX_NUMBER"/>
+				</constructor-arg>
+				<property name="columnSpan" value="12"/>
+				<property name="dataAsTextKey" value="false"/>
+				<property name="upperCase" value="false"/>
+				<property name="validationLists">
+					<list>
+						<list>
+							<value type="com.dbs.portal.ui.validator.ValidationType">Integer</value>
+							<value>email.validation.fax</value>
+						</list>
+					</list>
+				</property>				
+			</bean>
+		</list>
+	</util:list>
+	
+	<bean id="subscriptionOpenListener" class="com.dbs.portal.ui.subscription.SubscriptionOpenListener"/>
+	
+	<bean id="subscriptionRadioListener" class="com.dbs.portal.ui.subscription.SubscriptionRadioListener"/>
+	
+	
+	
+	<bean id="weeklyDataProvider" class="com.dbs.portal.ui.component.data.StaticDataProvider">
+		<property name="data">
+			<map value-type="java.lang.String">
+				<entry key="maintenance.subscription.label.weekly" value="maintenance.subscription.label.weekly"/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="monthlyDataProvider" class="com.dbs.portal.ui.component.data.StaticDataProvider">
+		<property name="data">
+			<map value-type="java.lang.String">
+				<entry key="maintenance.subscription.label.monthly" value="maintenance.subscription.label.monthly"/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="dailyDataProvider" class="com.dbs.portal.ui.component.data.StaticDataProvider">
+		<property name="data">
+			<map value-type="java.lang.String">
+				<entry key="maintenance.subscription.label.daily" value="maintenance.subscription.label.daily"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- <bean id="yesNoDataProvider" class="com.dbs.portal.ui.component.data.StaticDataProvider">
+		<property name="data">
+			<map value-type="java.lang.String">
+				<entry key="email.criteria.yes">
+					<util:constant static-field="com.dbs.portal.constants.OnlineTerminalReportConstant.YES"/>
+				</entry>
+				<entry key="email.criteria.no">
+					<util:constant static-field="com.dbs.portal.constants.OnlineTerminalReportConstant.NO"/>
+				</entry>
+			</map>
+		</property>
+	</bean> -->
+	
+	<bean id="yesNoDataProvider" class="com.dbs.portal.ui.component.data.StaticDataProvider">
+		<property name="data">
+			<map value-type="java.lang.String">
+				<entry key="email.criteria.yes" value="yes"/>
+				<entry key="email.criteria.no" value="no"/>
+			</map>
+		</property>
+	</bean>
+	
+</beans>

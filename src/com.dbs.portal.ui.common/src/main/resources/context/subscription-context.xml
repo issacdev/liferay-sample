@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:http="http://www.springframework.org/schema/integration/http"
+	xmlns:jms="http://www.springframework.org/schema/integration/jms"
+	xmlns:httpinvoker="http://www.springframework.org/schema/integration/httpinvoker"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/integration
+	http://www.springframework.org/schema/integration/spring-integration-2.0.xsd
+	http://www.springframework.org/schema/integration/http
+	http://www.springframework.org/schema/integration/http/spring-integration-http-2.0.xsd
+	http://www.springframework.org/schema/integration/jms
+	http://www.springframework.org/schema/integration/jms/spring-integration-jms-2.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+
+
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+		<property name="locations">
+			<list>
+			 	 <value>classpath:properties/common.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
+	
+	<bean id="subscriptionInfoView" class="com.dbs.portal.ui.component.view.BaseEnquiryView"  scope="prototype"> 
+		<constructor-arg name="labelWidth" value="80"></constructor-arg>
+		<constructor-arg name="fieldWidth" value="4"></constructor-arg>
+		<property name="requiredLabel" value="true"></property>
+		<property name="supportPageReset" value="false"/>
+		<property name="fieldList">
+			<list value-type="java.util.List">
+				<list>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="TEXTFIELD" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+						<constructor-arg name="fieldNameKey" value="maintenance.subscription.label.name"/>
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.constants.SubscriptionMaintenance.NAME"/>
+						</constructor-arg>
+						<property name="columnSpan" value="100"/>
+						<property name="required" value="common.subscription.validation.name"/>
+						<property name="upperCase" value="false"/>
+					</bean>
+				</list>
+				
+				<list>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="TEXTAREA" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+						<constructor-arg name="fieldNameKey" value="maintenance.subscription.label.description"/>
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.constants.SubscriptionMaintenance.DESCRIPTION"/>
+						</constructor-arg>
+						<property name="columnSpan" value="100"/>
+						<property name="dataAsTextKey" value="false"/>
+						<property name="upperCase" value="false"/>
+					</bean>
+				</list>
+				
+ 				<list>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="RADIO_BUTTON" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+						<constructor-arg name="fieldNameKey" value=""/>
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.constants.SubscriptionMaintenance.WEEKLY"/>
+						</constructor-arg>
+						<property name="dataProvider" ref="weeklyDataProvider"/>
+						<property name="columnSpan" value="1"/>
+						<property name="flexLayout" value="false"/>
+						<property name="labelWidth" value="80"/>
+						<property name="default" value="true"/>
+						<property name="listenerList">
+							<list>
+								<ref bean="subscriptionRadioListener"/>
+							</list>
+						</property>
+					</bean>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="CHECK_BOX" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+						<constructor-arg name="fieldNameKey" value="maintenance.subscription.label.sunday"/>
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.constants.SubscriptionMaintenance.SUNDAY"/>
+						</constructor-arg>
+						<property name="columnSpan" value="25"/>
+						<property name="labelWidth" value="80"/>
+					</bean>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="CHECK_BOX" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+						<constructor-arg name="fieldNameKey" value="maintenance.subscription.label.monday"/>
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.constants.SubscriptionMaintenance.MONDAY"/>
+						</constructor-arg>
+						<property name="columnSpan" value="25"/>
+					</bean>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="CHECK_BOX" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+						<constructor-arg name="fieldNameKey" value="maintenance.subscription.label.tuesday"/>
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.constants.SubscriptionMaintenance.TUESDAY"/>
+						</constructor-arg>
+						<property name="columnSpan" value="25"/>
+					</bean>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="CHECK_BOX" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+						<constructor-arg name="fieldNameKey" value="maintenance.subscription.label.wednesday"/>
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.constants.SubscriptionMaintenance.WEDNESDAY"/>
+						</constructor-arg>
+						<property name="columnSpan" value="25"/>
+					</bean>			
+				</list>
+				
+ 				<list>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+						<constructor-arg name="fieldNameKey" value=""/>
+						<constructor-arg name="dataId" value=""/>
+						<property name="columnSpan" value="20"/>
+					</bean>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="CHECK_BOX" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+						<constructor-arg name="fieldNameKey" value="maintenance.subscription.label.thursday"/>
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.constants.SubscriptionMaintenance.THURSDAY"/>
+						</constructor-arg>
+						<property name="columnSpan" value="25"/>
+					</bean>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="CHECK_BOX" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+						<constructor-arg name="fieldNameKey" value="maintenance.subscription.label.friday"/>
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.constants.SubscriptionMaintenance.FRIDAY"/>
+						</constructor-arg>
+						<property name="columnSpan" value="25"/>
+					</bean>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="CHECK_BOX" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+						<constructor-arg name="fieldNameKey" value="maintenance.subscription.label.saturday"/>
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.constants.SubscriptionMaintenance.SATURDAY"/>
+						</constructor-arg>
+						<property name="columnSpan" value="25"/>
+					</bean>
+				</list>				
+				<list>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+						<constructor-arg name="fieldNameKey" value=""/>
+						<constructor-arg name="dataId" value=""/>
+						<property name="columnSpan" value="20"/>
+					</bean>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+						<constructor-arg name="fieldNameKey" value=""/>
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.constants.SubscriptionMaintenance.ERROR_WEEKLY"/>
+						</constructor-arg>
+						<property name="columnSpan" value="75"/>
+						<property name="styleList">
+							<list>
+								<value>validation-error-label</value>
+							</list>
+						</property>
+					</bean>
+				</list>
+				<list>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="RADIO_BUTTON" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+						<constructor-arg name="fieldNameKey" value=""/>
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.constants.SubscriptionMaintenance.MONTHLY"/>
+						</constructor-arg>
+						<property name="dataProvider" ref="monthlyDataProvider"/>
+						<property name="columnSpan" value="1"/>
+						<property name="flexLayout" value="false"/>
+						<property name="labelWidth" value="80"/>
+						<property name="listenerList">
+							<list>
+								<ref bean="subscriptionRadioListener"/>
+							</list>
+						</property>
+					</bean>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="COMBOBOX" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+						<constructor-arg name="fieldNameKey" value="maintenance.subscription.label.day1"/>
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.constants.SubscriptionMaintenance.DAY1"/>
+						</constructor-arg>
+						<property name="dataProvider" ref="dayDataProvider"/>
+						<property name="columnSpan" value="10"/>
+						<property name="labelWidth" value="40"/>
+					</bean>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="COMBOBOX" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+						<constructor-arg name="fieldNameKey" value="maintenance.subscription.label.day2"/>
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.constants.SubscriptionMaintenance.DAY2"/>
+						</constructor-arg>
+						<property name="dataProvider" ref="dayDataProvider"/>
+						<property name="columnSpan" value="10"/>
+						<property name="labelWidth" value="40"/>
+					</bean>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="COMBOBOX" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+						<constructor-arg name="fieldNameKey" value="maintenance.subscription.label.day3"/>
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.constants.SubscriptionMaintenance.DAY3"/>
+						</constructor-arg>
+						<property name="dataProvider" ref="dayDataProvider"/>
+						<property name="columnSpan" value="10"/>
+						<property name="labelWidth" value="40"/>
+					</bean>
+				</list>
+				<list>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+						<constructor-arg name="fieldNameKey" value=""/>
+						<constructor-arg name="dataId" value=""/>
+						<property name="columnSpan" value="20"/>
+					</bean>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+						<constructor-arg name="fieldNameKey" value=""/>
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.constants.SubscriptionMaintenance.ERROR_MONTHLY"/>
+						</constructor-arg>
+						<property name="columnSpan" value="75"/>
+						<property name="styleList">
+							<list>
+								<value>validation-error-label</value>
+							</list>
+						</property>
+					</bean>
+				</list>
+				<list>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="RADIO_BUTTON" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+						<constructor-arg name="fieldNameKey" value=""/>
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.constants.SubscriptionMaintenance.DAILY"/>
+						</constructor-arg>
+						<property name="dataProvider" ref="dailyDataProvider"/>
+						<property name="columnSpan" value="1"/>
+						<property name="flexLayout" value="false"/>
+						<property name="labelWidth" value="80"/>
+						<property name="listenerList">
+							<list>
+								<ref bean="subscriptionRadioListener"/>
+							</list>
+						</property>
+					</bean>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="COMBOBOX" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+						<constructor-arg name="fieldNameKey" value="maintenance.subscription.label.time1"/>
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.constants.SubscriptionMaintenance.TIME1"/>
+						</constructor-arg>
+						<property name="dataProvider" ref="timeDataProvider"/>
+						<property name="columnSpan" value="20"/>
+						<property name="labelWidth" value="40"/>
+						<property name="paddingRequired" value="false"/>
+					</bean>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="COMBOBOX" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+						<constructor-arg name="fieldNameKey" value="maintenance.subscription.label.time2"/>
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.constants.SubscriptionMaintenance.TIME2"/>
+						</constructor-arg>
+						<property name="dataProvider" ref="timeDataProvider"/>
+						<property name="columnSpan" value="20"/>
+						<property name="labelWidth" value="40"/>
+						<property name="paddingRequired" value="false"/>
+					</bean>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="COMBOBOX" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+						<constructor-arg name="fieldNameKey" value="maintenance.subscription.label.time3"/>
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.constants.SubscriptionMaintenance.TIME3"/>
+						</constructor-arg>
+						<property name="dataProvider" ref="timeDataProvider"/>
+						<property name="columnSpan" value="20"/>
+						<property name="labelWidth" value="40"/>
+						<property name="paddingRequired" value="false"/>
+					</bean>
+				</list>				
+				<list>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+						<constructor-arg name="fieldNameKey" value=""/>
+						<constructor-arg name="dataId" value=""/>
+						<property name="columnSpan" value="20"/>
+					</bean>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+						<constructor-arg name="fieldNameKey" value=""/>
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.constants.SubscriptionMaintenance.ERROR_DAILY"/>
+						</constructor-arg>
+						<property name="columnSpan" value="75"/>
+						<property name="styleList">
+							<list>
+								<value>validation-error-label</value>
+							</list>
+						</property>
+					</bean>
+				</list>
+				<list>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="TEXTAREA" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+						<constructor-arg name="fieldNameKey" value="maintenance.subscription.label.email"/>
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.constants.SubscriptionMaintenance.EMAIL"/>
+						</constructor-arg>
+						<property name="default" value=""/>
+						<property name="columnSpan" value="100"/>
+						<property name="dataAsTextKey" value="false"/>
+						<property name="required" value="common.subscription.validation.email"/>
+					</bean>
+				</list>
+				<list>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+						<constructor-arg name="fieldNameKey" value=""/>
+						<constructor-arg name="dataId" value=""/>
+						<property name="columnSpan" value="20"/>
+					</bean>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType"/>
+						<constructor-arg name="fieldNameKey" value="common.subscription.emailtips"/>
+						<constructor-arg name="dataId" value=""/>
+						<property name="columnSpan" value="100"/>
+						<property name="staticField" value="true"/>
+						<property name="styleList">
+							<list>
+								<value>validation-error-label</value>
+							</list>
+						</property>
+					</bean>
+				</list>
+			</list>
+		</property>
+		 
+		<property name="exportButtonVisible" value="false"/>
+		<property name="SubscribeButtonVisible" value="false"/>
+		<property name="ProcessButtonVisible" value="true"/>
+		<property name="processButtonName" value="maintenance.subscription.button.update"/>
+		<property name="processClickListener" ref="subscriptionProcessListener"/>
+		<property name="ResetButtonVisible" value="false"/>
+		<property name="SaveTablePerferenceButtonVisible" value="false"/>
+		<property name="visible" value="true"/>
+	</bean>
+	
+	<bean id="subscriptionOpenListener" class="com.dbs.portal.ui.subscription.SubscriptionOpenListener"/>
+	
+	<bean id="subscriptionRadioListener" class="com.dbs.portal.ui.subscription.SubscriptionRadioListener"/>
+	
+	
+	
+	<bean id="weeklyDataProvider" class="com.dbs.portal.ui.component.data.StaticDataProvider">
+		<property name="data">
+			<map value-type="java.lang.String">
+				<entry key="maintenance.subscription.label.weekly" value="maintenance.subscription.label.weekly"/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="monthlyDataProvider" class="com.dbs.portal.ui.component.data.StaticDataProvider">
+		<property name="data">
+			<map value-type="java.lang.String">
+				<entry key="maintenance.subscription.label.monthly" value="maintenance.subscription.label.monthly"/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="dailyDataProvider" class="com.dbs.portal.ui.component.data.StaticDataProvider">
+		<property name="data">
+			<map value-type="java.lang.String">
+				<entry key="maintenance.subscription.label.daily" value="maintenance.subscription.label.daily"/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="dayDataProvider" class="com.dbs.portal.ui.component.data.StaticDataProvider">
+		<property name="data">
+			<map value-type="java.lang.String">
+				<entry key="1" value="1"/>
+				<entry key="2" value="2"/>
+				<entry key="3" value="3"/>
+				<entry key="4" value="4"/>
+				<entry key="5" value="5"/>
+				<entry key="6" value="6"/>
+				<entry key="7" value="7"/>
+				<entry key="8" value="8"/>
+				<entry key="9" value="9"/>
+				<entry key="10" value="10"/>
+				<entry key="11" value="11"/>
+				<entry key="12" value="12"/>
+				<entry key="13" value="13"/>
+				<entry key="14" value="14"/>
+				<entry key="15" value="15"/>
+				<entry key="16" value="16"/>
+				<entry key="17" value="17"/>
+				<entry key="18" value="18"/>
+				<entry key="19" value="19"/>
+				<entry key="20" value="20"/>
+				<entry key="21" value="21"/>
+				<entry key="22" value="22"/>
+				<entry key="23" value="23"/>
+				<entry key="24" value="24"/>
+				<entry key="25" value="25"/>
+				<entry key="26" value="26"/>
+				<entry key="27" value="27"/>
+				<entry key="28" value="28"/>
+				<entry key="29" value="29"/>
+				<entry key="30" value="30"/>
+				<entry key="31" value="31"/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="timeDataProvider" class="com.dbs.portal.ui.component.data.StaticDataProvider">
+		<property name="data">
+			<map value-type="java.lang.String">
+				<entry key="00:00" value="00:00"/>
+				<entry key="00:15" value="00:15"/>
+				<entry key="00:30" value="00:30"/>
+				<entry key="00:45" value="00:45"/>
+				<entry key="01:00" value="01:00"/>
+				<entry key="01:15" value="01:15"/>
+				<entry key="01:30" value="01:30"/>
+				<entry key="01:45" value="01:45"/>
+				<entry key="02:00" value="02:00"/>
+				<entry key="02:15" value="02:15"/>
+				<entry key="02:30" value="02:30"/>
+				<entry key="02:45" value="02:45"/>
+				<entry key="03:00" value="03:00"/>
+				<entry key="03:15" value="03:15"/>
+				<entry key="03:30" value="03:30"/>
+				<entry key="03:45" value="03:45"/>
+				<entry key="04:00" value="04:00"/>
+				<entry key="04:15" value="04:15"/>
+				<entry key="04:30" value="04:30"/>
+				<entry key="04:45" value="04:45"/>
+				<entry key="05:00" value="05:00"/>
+				<entry key="05:15" value="05:15"/>
+				<entry key="05:30" value="05:30"/>
+				<entry key="05:45" value="05:45"/>
+				<entry key="06:00" value="06:00"/>
+				<entry key="06:15" value="06:15"/>
+				<entry key="06:30" value="06:30"/>
+				<entry key="06:45" value="06:45"/>
+				<entry key="07:00" value="07:00"/>
+				<entry key="07:15" value="07:15"/>
+				<entry key="07:30" value="07:30"/>
+				<entry key="07:45" value="07:45"/>
+				<entry key="08:00" value="08:00"/>
+				<entry key="08:15" value="08:15"/>
+				<entry key="08:30" value="08:30"/>
+				<entry key="08:45" value="08:45"/>
+				<entry key="09:00" value="09:00"/>
+				<entry key="09:15" value="09:15"/>
+				<entry key="09:30" value="09:30"/>
+				<entry key="09:45" value="09:45"/>
+				<entry key="10:00" value="10:00"/>
+				<entry key="10:15" value="10:15"/>
+				<entry key="10:30" value="10:30"/>
+				<entry key="10:45" value="10:45"/>
+				<entry key="11:00" value="11:00"/>
+				<entry key="11:15" value="11:15"/>
+				<entry key="11:30" value="11:30"/>
+				<entry key="11:45" value="11:45"/>
+				<entry key="12:00" value="12:00"/>
+				<entry key="12:15" value="12:15"/>
+				<entry key="12:30" value="12:30"/>
+				<entry key="12:45" value="12:45"/>
+				<entry key="13:00" value="13:00"/>
+				<entry key="13:15" value="13:15"/>
+				<entry key="13:30" value="13:30"/>
+				<entry key="13:45" value="13:45"/>
+				<entry key="14:00" value="14:00"/>
+				<entry key="14:15" value="14:15"/>
+				<entry key="14:30" value="14:30"/>
+				<entry key="14:45" value="14:45"/>
+				<entry key="15:00" value="15:00"/>
+				<entry key="15:15" value="15:15"/>
+				<entry key="15:30" value="15:30"/>
+				<entry key="15:45" value="15:45"/>
+				<entry key="16:00" value="16:00"/>
+				<entry key="16:15" value="16:15"/>
+				<entry key="16:30" value="16:30"/>
+				<entry key="16:45" value="16:45"/>
+				<entry key="17:00" value="17:00"/>
+				<entry key="17:15" value="17:15"/>
+				<entry key="17:30" value="17:30"/>
+				<entry key="17:45" value="17:45"/>
+				<entry key="18:00" value="18:00"/>
+				<entry key="18:15" value="18:15"/>
+				<entry key="18:30" value="18:30"/>
+				<entry key="18:45" value="18:45"/>
+				<entry key="19:00" value="19:00"/>
+				<entry key="19:15" value="19:15"/>
+				<entry key="19:30" value="19:30"/>
+				<entry key="19:45" value="19:45"/>
+				<entry key="20:00" value="20:00"/>
+				<entry key="20:15" value="20:15"/>
+				<entry key="20:30" value="20:30"/>
+				<entry key="20:45" value="20:45"/>
+				<entry key="21:00" value="21:00"/>
+				<entry key="21:15" value="21:15"/>
+				<entry key="21:30" value="21:30"/>
+				<entry key="21:45" value="21:45"/>
+				<entry key="22:00" value="22:00"/>
+				<entry key="22:15" value="22:15"/>
+				<entry key="22:30" value="22:30"/>
+				<entry key="22:45" value="22:45"/>
+				<entry key="23:00" value="23:00"/>
+				<entry key="23:15" value="23:15"/>
+				<entry key="23:30" value="23:30"/>
+				<entry key="23:45" value="23:45"/>
+			</map>
+		</property>
+	</bean>
+</beans>

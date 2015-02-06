@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="FASTAdminOnly">
+        <wb-resource deploy-path="/WEB-INF/web.xml" source-path="/WebContent/WEB-INF/web.xml"/>
+        <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
+        <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+        <dependent-module archiveName="com.dbs.portal.ui.common-0.0.1.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/com.dbs.portal.ui.common/com.dbs.portal.ui.common">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="com.dbs.portal.ui.MaskedTextField-0.0.1.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/com.dbs.portal.ui.MaskedTextField/com.dbs.portal.ui.MaskedTextField">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="com.dbs.fast.db.bean-1.0.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/com.dbs.fast.db.bean/com.dbs.fast.db.bean">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="db-core-1.0.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/db-core/db-core">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="CommonTools-1.0.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/CommonTools/CommonTools">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="com.dbs.fast.db.dao-1.0.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/com.dbs.fast.db.dao/com.dbs.fast.db.dao">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="com.dbs.fast.db.service-1.0.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/com.dbs.fast.db.service/com.dbs.fast.db.service">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <property name="java-output-path" value="/FASTAdminOnly/build/classes"/>
+        <property name="context-root" value="fast.adminOnly"/>
+    </wb-module>
+</project-modules>

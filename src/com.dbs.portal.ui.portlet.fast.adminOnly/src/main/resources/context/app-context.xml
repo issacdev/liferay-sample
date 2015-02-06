@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:http="http://www.springframework.org/schema/integration/http" xmlns:jms="http://www.springframework.org/schema/integration/jms"
+	xmlns:httpinvoker="http://www.springframework.org/schema/integration/httpinvoker" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/integration
+	http://www.springframework.org/schema/integration/spring-integration-2.0.xsd
+	http://www.springframework.org/schema/integration/http
+	http://www.springframework.org/schema/integration/http/spring-integration-http-2.0.xsd
+	http://www.springframework.org/schema/integration/jms
+	http://www.springframework.org/schema/integration/jms/spring-integration-jms-2.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+
+	<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
+
+	<!-- InternationMesssage Handler -->
+	<bean id="messaging" class="com.dbs.portal.ui.util.Messages" scope="prototype" />
+
+	<!-- DB Setting - Start -->
+	<bean id="TransactionMonitor" class="com.dbs.db.transaction.TransactionMonitor" />
+
+	<bean id="AdminOnlyController" class="org.springframework.aop.framework.ProxyFactoryBean" scope="request">
+		<property name="target" ref="AdminOnlyControllerObject" />
+		<property name="interceptorNames">
+			<list>
+				<value>TransactionMonitor</value>
+			</list>
+		</property>
+	</bean>
+	<!-- DB Setting - End -->
+
+	<!-- controller class -->
+	<bean id="AdminOnlyControllerObject" class="com.dbs.portal.ui.portlet.fast.adminOnly.control.AdminOnlyController"
+		scope="request">
+		<property name="id" value="AdminOnly" />
+		<property name="view" ref="BaseWindow" />
+		<property name="mapOfListener">
+			<list>
+				<ref bean="confirmDialogResetListener" />
+				<ref bean="editConfigListener" />
+				<ref bean="confirmEditConfigListener" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- main windows -->
+	<bean id="BaseWindow" class="com.dbs.portal.ui.component.view.BaseWindow" scope="request">
+		<property name="mapOfLayout">
+			<map>
+				<entry key="ConfigRecordView" value-ref="ConfigRecordView" />
+				<entry key="NoResultView" value-ref="NoResultView" />
+			</map>
+		</property>
+		<property name="hiddenLayout">
+			<map>
+				<entry key="EditConfigView" value-ref="EditConfigView" />
+			</map>
+		</property>
+	</bean>
+
+	<bean id="ConfigRecordView" class="com.dbs.portal.ui.component.view.BaseTableView" scope="prototype">
+		<property name="selectedPageList">
+			<list value-type="java.lang.String">
+				<value>5</value>
+				<value>10</value>
+				<value>25</value>
+				<value>50</value>
+			</list>
+		</property>
+		<property name="selectedPageLength" value="25" />
+		<property name="columnHeader">
+			<list value-type="java.lang.String">
+				<value>configRecordView.result.action</value>
+				<value>configRecordView.result.syscode</value>
+				<value>configRecordView.result.fkey</value>
+				<value>configRecordView.result.value</value>
+				<value>configRecordView.result.description</value>
+				<value>configRecordView.result.updatedBy</value>
+				<value>configRecordView.result.updatedDateTime</value>
+			</list>
+		</property>
+		<property name="visibleColumnHeader">
+			<list>
+				<util:constant static-field="com.dbs.portal.database.constants.FASTConstant.ACTION" />
+				<util:constant static-field="com.dbs.portal.database.constants.FASTConstant.SYSCODE" />
+				<util:constant static-field="com.dbs.portal.database.constants.FASTConstant.FKEY" />
+				<util:constant static-field="com.dbs.portal.database.constants.FASTConstant.VALUE" />
+				<util:constant static-field="com.dbs.portal.database.constants.FASTConstant.DESCRIPTION" />
+				<util:constant static-field="com.dbs.portal.database.constants.FASTConstant.UPDATED_BY" />
+				<util:constant static-field="com.dbs.portal.database.constants.FASTConstant.UPDATED_DATE_TIME" />
+			</list>
+		</property>
+		<property name="visible" value="false" />
+		<property name="pagedTableParameter">
+			<list>
+				<bean class="com.dbs.portal.ui.component.pagetable.MultiPagedTableParameterList">
+					<constructor-arg name="columnName">
+						<util:constant static-field="com.dbs.portal.database.constants.FASTConstant.ACTION" />
+					</constructor-arg>
+					<property name="columnType">
+						<value type="com.dbs.portal.ui.component.pagetable.PagedTableParameterType">MULTIBUTTON</value>
+					</property>
+					<property name="showComponent">
+						<bean class="com.dbs.portal.ui.component.pagetable.ShowComponentByPermission">
+							<property name="permissionMap">
+								<map>
+									<entry>
+										<key>
+											<util:constant static-field="com.dbs.portal.database.constants.PagedTableItemPermissionConstant.GROUP" />
+										</key>
+										<list>
+											<util:constant static-field="com.dbs.portal.database.constants.FASTConstant.FAST_ADMIN_GROUP" />
+										</list>
+									</entry>
+								</map>
+							</property>
+						</bean>
+					</property>
+					<property name="parameters">
+						<list>
+							<bean class="com.dbs.portal.ui.component.pagetable.MultiPagedTableParameter">
+								<property name="showComponent">
+									<bean class="com.dbs.portal.ui.component.pagetable.ShowComponentByPermission">
+										<property name="permissionMap">
+											<map>
+												<entry>
+													<key>
+														<util:constant static-field="com.dbs.portal.database.constants.PagedTableItemPermissionConstant.GROUP" />
+													</key>
+													<list>
+														<util:constant static-field="com.dbs.portal.database.constants.FASTConstant.FAST_ADMIN_GROUP" />
+													</list>
+												</entry>
+											</map>
+										</property>
+									</bean>
+								</property>
+								<property name="labelKey" value="configRecordView.button.edit" />
+								<property name="listenerList">
+									<list>
+										<ref bean="editConfigListener" />
+									</list>
+								</property>
+							</bean>
+						</list>
+					</property>
+					<property name="alignment">
+						<util:constant static-field="com.vaadin.ui.Table.ALIGN_CENTER" />
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="EditConfigView" class="com.dbs.portal.ui.component.view.BaseEnquiryView" scope="prototype">
+		<constructor-arg name="labelWidth" value="120" />
+		<constructor-arg name="fieldWidth" value="10" />
+		<property name="requiredLabel" value="true" />
+		<property name="supportPageReset" value="false" />
+		<property name="fieldList">
+			<list value-type="java.util.List">
+				<list value-type="com.dbs.portal.ui.component.view.FormField">
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="adminOnly.config.update" />
+						<constructor-arg name="dataId" value="" />
+						<property name="columnSpan" value="30" />
+						<property name="staticField" value="true" />
+						<property name="styleList">
+							<list>
+								<value>dbsCaption</value>
+							</list>
+						</property>
+					</bean>
+				</list>
+				<list>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="configRecordView.result.fkey" />
+						<constructor-arg name="dataId" value="" />
+						<property name="columnSpan" value="12" />
+						<property name="staticField" value="true" />
+					</bean>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="configRecordView.result.fkey" />
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.database.constants.FASTConstant.FKEY" />
+						</constructor-arg>
+						<property name="columnSpan" value="10" />
+					</bean>
+				</list>
+				<list>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="configRecordView.result.description" />
+						<constructor-arg name="dataId" value="" />
+						<property name="columnSpan" value="12" />
+						<property name="staticField" value="true" />
+					</bean>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="configRecordView.result.description" />
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.database.constants.FASTConstant.DESCRIPTION" />
+						</constructor-arg>
+						<property name="columnSpan" value="50" />
+					</bean>
+				</list>
+				<list>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg value="TEXTFIELD" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="configRecordView.result.value" />
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.database.constants.FASTConstant.VALUE" />
+						</constructor-arg>
+						<property name="columnSpan" value="50" />
+						<property name="maxLength" value="500" />
+						<property name="UpperCase" value="false" />
+					</bean>
+				</list>
+			</list>
+		</property>
+		<property name="ProcessButtonVisible" value="true" />
+		<property name="processButtonName" value="adminOnly.button.submit" />
+		<property name="processClickListener" ref="confirmEditConfigListener" />
+		<property name="ResetButtonVisible" value="true" />
+		<property name="stopButtonName" value="adminOnly.button.cancel" />
+		<property name="resetClickListener" ref="confirmDialogResetListener" />
+		<property name="visible" value="true" />
+		<property name="canCollapse" value="false" />
+	</bean>
+
+	<!-- No Result View -->
+	<bean id="NoResultView" class="com.dbs.portal.ui.component.view.NoResultView" scope="prototype">
+		<property name="visible" value="false" />
+	</bean>
+
+	<!-- listener -->
+	<bean id="confirmDialogResetListener" class="com.dbs.portal.ui.layout.listener.ConfirmDialogResetListener" scope="request" />
+
+	<bean id="editConfigListener" class="com.dbs.portal.ui.portlet.fast.adminOnly.listener.EditConfigListener" scope="request" />
+
+	<bean id="confirmEditConfigListener" class="com.dbs.portal.ui.portlet.fast.adminOnly.listener.ConfirmEditConfigListener"
+		scope="request" />
+
+</beans>
