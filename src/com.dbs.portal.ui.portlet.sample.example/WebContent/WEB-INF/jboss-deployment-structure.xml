@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+
+<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.0">
+	<deployment>
+		<exclusions>
+			<module name="javaee.api"></module>
+			<module name="org.apache.log4j"></module>
+		</exclusions>
+		<dependencies>
+			<module name="com.liferay.portal"></module>
+			<module name="dbs.liferay.portlet"></module>
+			<module name="javax.mail.api"></module>
+			<module name="org.jboss.modules"></module>
+			<module name="org.apache.log4j"></module>
+			<module name="org.springframework">
+				<imports>
+					<include path="META-INF**"></include>
+					<include path="org**"></include>
+				</imports>
+			</module>
+			<module name="javax.annotation.api"></module>
+			<module name="javax.enterprise.api"></module>
+			<module name="javax.inject.api"></module>
+			<module name="javax.interceptor.api"></module>
+			<module name="javax.validation.api"></module>
+			<module name="dbs.liferay.hibernate"></module>
+		</dependencies>
+	</deployment>
+</jboss-deployment-structure>

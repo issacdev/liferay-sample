@@ -1,0 +1,24 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>com.dbs.portal.ui.parent</artifactId>
+		<groupId>com.dbs.portal</groupId>
+		<version>0.0.1</version>
+	</parent>
+	<groupId>com.dbs.portal</groupId>
+	<artifactId>com.dbs.portal.ui.portlet.sample.example</artifactId>
+	<version>${module.version}</version>
+	<name>Sample Portlet</name>
+	<properties>
+		<war.name>sample.example</war.name>
+	</properties>
+	<packaging>war</packaging>
+	<dependencies>
+		<dependency>
+			<groupId>com.dbs.portal</groupId>
+			<artifactId>com.dbs.portal.ui.common</artifactId>
+			<version>${module.version}</version>
+		</dependency>
+	</dependencies>
+</project>

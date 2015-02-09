@@ -1,0 +1,644 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:int="http://www.springframework.org/schema/integration" xmlns:http="http://www.springframework.org/schema/integration/http" xmlns:jms="http://www.springframework.org/schema/integration/jms"
+	xmlns:httpinvoker="http://www.springframework.org/schema/integration/httpinvoker" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/integration
+	http://www.springframework.org/schema/integration/spring-integration-2.0.xsd
+	http://www.springframework.org/schema/integration/http
+	http://www.springframework.org/schema/integration/http/spring-integration-http-2.0.xsd
+	http://www.springframework.org/schema/integration/jms
+	http://www.springframework.org/schema/integration/jms/spring-integration-jms-2.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+
+	<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
+
+	<!-- InternationMesssage Handler -->
+	<bean id="messaging" class="com.dbs.portal.ui.util.Messages" scope="prototype" />
+
+	<!-- DB Setting - Start -->
+	<bean id="TransactionMonitor" class="com.dbs.db.transaction.TransactionMonitor" />
+
+	<bean id="SampleController" class="org.springframework.aop.framework.ProxyFactoryBean" scope="request">
+		<property name="target" ref="SampleControllerObject" />
+		<property name="interceptorNames">
+			<list>
+				<value>TransactionMonitor</value>
+			</list>
+		</property>
+	</bean>
+	<!-- DB Setting - End -->
+
+	<!-- controller class -->
+	<bean id="SampleControllerObject" class="com.dbs.portal.ui.portlet.sample.example.control.SampleController" scope="request">
+		<property name="id" value="Sample" />
+		<property name="view" ref="BaseWindow" />
+		<property name="mapOfListener">
+			<list>
+				<ref bean="submitEnquiryListener" />
+				<ref bean="dateRangeListener" />
+				<ref bean="dateRangeValidator" />
+				<ref bean="dateBeginEndValidator" />
+				<ref bean="dateBothFromToValidator" />
+				<ref bean="exportReportListener" />
+				<ref bean="confirmDialogResetListener" />
+				<ref bean="createSampleListener" />
+				<ref bean="confirmCreateSampleListener" />
+				<ref bean="editSampleListener" />
+				<ref bean="confirmEditSampleListener" />
+				<ref bean="deleteSampleListener" />
+				<ref bean="confirmDeleteSampleListener" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- main windows -->
+	<bean id="BaseWindow" class="com.dbs.portal.ui.component.view.BaseWindow" scope="request">
+		<property name="mapOfLayout">
+			<map>
+				<entry key="EnquiryView" value-ref="SampleEnquiryView" />
+				<entry key="RecordView" value-ref="SampleRecordView" />
+				<entry key="NoResultView" value-ref="NoResultView" />
+			</map>
+		</property>
+		<property name="hiddenLayout">
+			<map>
+				<entry key="CreateSampleView" value-ref="CreateSampleView" />
+				<entry key="EditSampleView" value-ref="EditSampleView" />
+				<entry key="DeleteSampleView" value-ref="DeleteSampleView" />
+			</map>
+		</property>
+	</bean>
+
+	<!-- enquiry view -->
+	<bean id="SampleEnquiryView" class="com.dbs.portal.ui.component.view.BaseEnquiryView" scope="prototype">
+		<constructor-arg name="labelWidth" value="120" />
+		<constructor-arg name="fieldWidth" value="10" />
+		<property name="requiredLabel" value="true" />
+		<property name="fieldList">
+			<list value-type="java.util.List">
+				<list value-type="com.dbs.portal.ui.component.view.FormField">
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="sample.caption.main" />
+						<constructor-arg name="dataId" value="" />
+						<property name="columnSpan" value="40" />
+						<property name="staticField" value="true" />
+						<property name="styleList">
+							<list>
+								<value>dbsCaption</value>
+							</list>
+						</property>
+					</bean>
+				</list>
+				<list value-type="com.dbs.portal.ui.component.view.FormField">
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg value="NUMERICFIELD" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="sample.criteria.id" />
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.database.constants.SampleConstant.ID" />
+						</constructor-arg>
+						<property name="columnSpan" value="10" />
+						<property name="maxLength" value="9" />
+					</bean>
+				</list>
+				<list value-type="com.dbs.portal.ui.component.view.FormField">
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="COMBOBOX" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="sample.criteria.key" />
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.database.constants.SampleConstant.SKEY" />
+						</constructor-arg>
+						<property name="defaultSelect">
+							<value type="java.lang.Integer">1</value>
+						</property>
+						<property name="dataProvider" ref="keyDataProvider" />
+						<property name="allowEmptyItem" value="true" />
+						<property name="columnSpan" value="15" />
+					</bean>
+				</list>
+				<list value-type="com.dbs.portal.ui.component.view.FormField">
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg value="TEXTFIELD" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="sample.criteria.value" />
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.database.constants.SampleConstant.VALUE" />
+						</constructor-arg>
+						<property name="columnSpan" value="50" />
+						<property name="maxLength" value="20" />
+					</bean>
+				</list>
+				<list>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="DATETIME" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="sample.criteria.fromDate" />
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.database.constants.SampleConstant.FROM_DATE" />
+						</constructor-arg>
+						<property name="required" value="sample.message.validation.fromDate" />
+						<property name="defaultList">
+							<list>
+								<bean class="com.dbs.portal.ui.component.type.DateFieldDefaultParameter">
+									<constructor-arg name="defaultType">
+										<util:constant static-field="java.util.Calendar.DATE" />
+									</constructor-arg>
+									<constructor-arg name="value" value="-7" type="java.lang.Integer" />
+									<property name="adjustment">
+										<value type="java.lang.Boolean">true</value>
+									</property>
+								</bean>
+								<bean class="com.dbs.portal.ui.component.type.DateFieldDefaultParameter">
+									<constructor-arg name="defaultType">
+										<util:constant static-field="java.util.Calendar.HOUR_OF_DAY" />
+									</constructor-arg>
+									<constructor-arg name="value" value="0" type="java.lang.Integer"></constructor-arg>
+								</bean>
+								<bean class="com.dbs.portal.ui.component.type.DateFieldDefaultParameter">
+									<constructor-arg name="defaultType">
+										<util:constant static-field="java.util.Calendar.MINUTE" />
+									</constructor-arg>
+									<constructor-arg name="value" value="0" type="java.lang.Integer"></constructor-arg>
+								</bean>
+							</list>
+						</property>
+						<property name="validationObjList">
+							<list>
+								<ref bean="dateRangeValidator" />
+								<ref bean="dateBeginEndValidator" />
+								<ref bean="dateBothFromToValidator" />
+							</list>
+						</property>
+						<property name="listenerList">
+							<list>
+								<ref bean="dateRangeListener" />
+							</list>
+						</property>
+						<property name="labelWidth" value="120" />
+						<property name="columnSpan" value="10" />
+					</bean>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="DATETIME" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="sample.criteria.toDate" />
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.database.constants.SampleConstant.TO_DATE" />
+						</constructor-arg>
+						<property name="required" value="sample.message.validation.toDate" />
+						<property name="defaultList">
+							<list>
+								<bean class="com.dbs.portal.ui.component.type.DateFieldDefaultParameter">
+									<constructor-arg name="defaultType">
+										<util:constant static-field="java.util.Calendar.HOUR_OF_DAY" />
+									</constructor-arg>
+									<constructor-arg name="value" value="23" type="java.lang.Integer"></constructor-arg>
+								</bean>
+								<bean class="com.dbs.portal.ui.component.type.DateFieldDefaultParameter">
+									<constructor-arg name="defaultType">
+										<util:constant static-field="java.util.Calendar.MINUTE" />
+									</constructor-arg>
+									<constructor-arg name="value" value="59" type="java.lang.Integer"></constructor-arg>
+								</bean>
+							</list>
+						</property>
+						<property name="validationObjList">
+							<list>
+								<ref bean="dateRangeValidator" />
+								<ref bean="dateBeginEndValidator" />
+								<ref bean="dateBothFromToValidator" />
+							</list>
+						</property>
+						<property name="listenerList">
+							<list>
+								<ref bean="dateRangeListener" />
+							</list>
+						</property>
+						<property name="labelWidth" value="120" />
+						<property name="columnSpan" value="10" />
+					</bean>
+				</list>
+			</list>
+		</property>
+		<property name="processClickListener" ref="submitEnquiryListener" />
+		<property name="exportButtonVisible" value="true" />
+		<property name="exportClickListener" ref="exportReportListener" />
+		<property name="extraButtonList">
+			<list>
+				<bean class="com.dbs.portal.ui.component.button.ExtraButton">
+					<property name="buttonName" value="sample.button.add" />
+					<property name="listener">
+						<list>
+							<ref bean="createSampleListener" />
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<!-- Result -->
+	<bean id="SampleRecordView" class="com.dbs.portal.ui.component.view.BaseTableView" scope="prototype">
+		<property name="selectedPageList">
+			<list value-type="java.lang.String">
+				<value>5</value>
+				<value>10</value>
+				<value>25</value>
+				<value>50</value>
+			</list>
+		</property>
+		<property name="selectedPageLength" value="25" />
+		<property name="columnHeader">
+			<list value-type="java.lang.String">
+				<value>recordView.result.action</value>
+				<value>recordView.result.id</value>
+				<value>recordView.result.key</value>
+				<value>recordView.result.value</value>
+				<value>recordView.result.updatedBy</value>
+				<value>recordView.result.updatedDateTime</value>
+			</list>
+		</property>
+		<property name="visibleColumnHeader">
+			<list>
+				<util:constant static-field="com.dbs.portal.database.constants.SampleConstant.ACTION" />
+				<util:constant static-field="com.dbs.portal.database.constants.SampleConstant.ID" />
+				<util:constant static-field="com.dbs.portal.database.constants.SampleConstant.SKEY" />
+				<util:constant static-field="com.dbs.portal.database.constants.SampleConstant.VALUE" />
+				<util:constant static-field="com.dbs.portal.database.constants.SampleConstant.UPDATED_BY" />
+				<util:constant static-field="com.dbs.portal.database.constants.SampleConstant.UPDATED_DATE_TIME" />
+			</list>
+		</property>
+		<property name="visible" value="false" />
+		<property name="pagedTableParameter">
+			<list>
+				<bean class="com.dbs.portal.ui.component.pagetable.MultiPagedTableParameterList">
+					<constructor-arg name="columnName">
+						<util:constant static-field="com.dbs.portal.database.constants.SampleConstant.ACTION" />
+					</constructor-arg>
+					<property name="columnType">
+						<value type="com.dbs.portal.ui.component.pagetable.PagedTableParameterType">MULTIBUTTON</value>
+					</property>
+					<property name="parameters">
+						<list>
+							<bean class="com.dbs.portal.ui.component.pagetable.MultiPagedTableParameter">
+								<property name="labelKey" value="sample.button.edit" />
+								<property name="listenerList">
+									<list>
+										<ref bean="editSampleListener" />
+									</list>
+								</property>
+							</bean>
+							<bean class="com.dbs.portal.ui.component.pagetable.MultiPagedTableParameter">
+								<property name="labelKey" value="sample.button.delete" />
+								<property name="listenerList">
+									<list>
+										<ref bean="deleteSampleListener" />
+									</list>
+								</property>
+							</bean>
+						</list>
+					</property>
+					<property name="alignment">
+						<util:constant static-field="com.vaadin.ui.Table.ALIGN_CENTER" />
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="CreateSampleView" class="com.dbs.portal.ui.component.view.BaseEnquiryView" scope="prototype">
+		<constructor-arg name="labelWidth" value="120" />
+		<constructor-arg name="fieldWidth" value="10" />
+		<property name="requiredLabel" value="true" />
+		<property name="supportPageReset" value="false" />
+		<property name="fieldList">
+			<list value-type="java.util.List">
+				<list value-type="com.dbs.portal.ui.component.view.FormField">
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="sample.caption.create" />
+						<constructor-arg name="dataId" value="" />
+						<property name="columnSpan" value="30" />
+						<property name="staticField" value="true" />
+						<property name="styleList">
+							<list>
+								<value>dbsCaption</value>
+							</list>
+						</property>
+					</bean>
+				</list>
+				<list>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="TEXTFIELD" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="sample.criteria.key" />
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.database.constants.SampleConstant.SKEY" />
+						</constructor-arg>
+						<property name="columnSpan" value="10" />
+						<property name="required" value="sample.create.message.key" />
+						<property name="validationLists">
+							<list>
+								<list>
+									<value type="com.dbs.portal.ui.validator.ValidationType">StringLength</value>
+									<value>sample.validate.message.id</value>
+									<value type="java.lang.Integer">3</value>
+									<value type="java.lang.Integer">9</value>
+									<value type="java.lang.Boolean">true</value>
+								</list>
+							</list>
+						</property>
+					</bean>
+				</list>
+				<list>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg value="TEXTFIELD" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="sample.criteria.value" />
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.database.constants.SampleConstant.VALUE" />
+						</constructor-arg>
+						<property name="columnSpan" value="50" />
+						<property name="maxLength" value="20" />
+						<property name="UpperCase" value="false" />
+						<property name="required" value="sample.create.message.value" />
+					</bean>
+				</list>
+			</list>
+		</property>
+		<property name="ProcessButtonVisible" value="true" />
+		<property name="processButtonName" value="sample.button.submit" />
+		<property name="processClickListener" ref="confirmCreateSampleListener" />
+		<property name="ResetButtonVisible" value="true" />
+		<property name="stopButtonName" value="sample.button.cancel" />
+		<property name="resetClickListener" ref="confirmDialogResetListener" />
+		<property name="visible" value="true" />
+		<property name="canCollapse" value="false" />
+	</bean>
+
+	<bean id="EditSampleView" class="com.dbs.portal.ui.component.view.BaseEnquiryView" scope="prototype">
+		<constructor-arg name="labelWidth" value="120" />
+		<constructor-arg name="fieldWidth" value="10" />
+		<property name="requiredLabel" value="true" />
+		<property name="supportPageReset" value="false" />
+		<property name="fieldList">
+			<list value-type="java.util.List">
+				<list value-type="com.dbs.portal.ui.component.view.FormField">
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="sample.caption.update" />
+						<constructor-arg name="dataId" value="" />
+						<property name="columnSpan" value="30" />
+						<property name="staticField" value="true" />
+						<property name="styleList">
+							<list>
+								<value>dbsCaption</value>
+							</list>
+						</property>
+					</bean>
+				</list>
+				<list>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="sample.criteria.id" />
+						<constructor-arg name="dataId" value="" />
+						<property name="columnSpan" value="12" />
+						<property name="staticField" value="true" />
+					</bean>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="sample.criteria.id" />
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.database.constants.SampleConstant.ID" />
+						</constructor-arg>
+						<property name="columnSpan" value="10" />
+					</bean>
+				</list>
+				<list>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="sample.criteria.key" />
+						<constructor-arg name="dataId" value="" />
+						<property name="columnSpan" value="12" />
+						<property name="staticField" value="true" />
+					</bean>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="sample.criteria.key" />
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.database.constants.SampleConstant.SKEY" />
+						</constructor-arg>
+						<property name="columnSpan" value="10" />
+					</bean>
+				</list>
+				<list>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="sample.criteria.orgvalue" />
+						<constructor-arg name="dataId" value="" />
+						<property name="columnSpan" value="12" />
+						<property name="staticField" value="true" />
+					</bean>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="sample.criteria.orgvalue" />
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.database.constants.SampleConstant.ORG_VALUE" />
+						</constructor-arg>
+						<property name="columnSpan" value="10" />
+					</bean>
+				</list>
+				<list>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg value="TEXTFIELD" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="sample.criteria.value" />
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.database.constants.SampleConstant.VALUE" />
+						</constructor-arg>
+						<property name="columnSpan" value="50" />
+						<property name="maxLength" value="20" />
+						<property name="UpperCase" value="false" />
+					</bean>
+				</list>
+			</list>
+		</property>
+		<property name="ProcessButtonVisible" value="true" />
+		<property name="processButtonName" value="sample.button.submit" />
+		<property name="processClickListener" ref="confirmEditSampleListener" />
+		<property name="ResetButtonVisible" value="true" />
+		<property name="stopButtonName" value="sample.button.cancel" />
+		<property name="resetClickListener" ref="confirmDialogResetListener" />
+		<property name="visible" value="true" />
+		<property name="canCollapse" value="false" />
+	</bean>
+
+	<bean id="DeleteSampleView" class="com.dbs.portal.ui.component.view.BaseEnquiryView" scope="prototype">
+		<constructor-arg name="labelWidth" value="120" />
+		<constructor-arg name="fieldWidth" value="10" />
+		<property name="requiredLabel" value="true" />
+		<property name="supportPageReset" value="false" />
+		<property name="fieldList">
+			<list value-type="java.util.List">
+				<list value-type="com.dbs.portal.ui.component.view.FormField">
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="sample.caption.delete" />
+						<constructor-arg name="dataId" value="" />
+						<property name="columnSpan" value="30" />
+						<property name="staticField" value="true" />
+						<property name="styleList">
+							<list>
+								<value>dbsCaption</value>
+							</list>
+						</property>
+					</bean>
+				</list>
+				<list>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="sample.criteria.id" />
+						<constructor-arg name="dataId" value="" />
+						<property name="columnSpan" value="12" />
+						<property name="staticField" value="true" />
+					</bean>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="sample.criteria.id" />
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.database.constants.SampleConstant.ID" />
+						</constructor-arg>
+						<property name="columnSpan" value="10" />
+					</bean>
+				</list>
+				<list>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="sample.criteria.key" />
+						<constructor-arg name="dataId" value="" />
+						<property name="columnSpan" value="12" />
+						<property name="staticField" value="true" />
+					</bean>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="sample.criteria.key" />
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.database.constants.SampleConstant.SKEY" />
+						</constructor-arg>
+						<property name="columnSpan" value="10" />
+					</bean>
+				</list>
+				<list>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="sample.criteria.value" />
+						<constructor-arg name="dataId" value="" />
+						<property name="columnSpan" value="12" />
+						<property name="staticField" value="true" />
+					</bean>
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="sample.criteria.value" />
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.portal.database.constants.SampleConstant.VALUE" />
+						</constructor-arg>
+						<property name="columnSpan" value="10" />
+					</bean>
+				</list>
+			</list>
+		</property>
+		<property name="ProcessButtonVisible" value="true" />
+		<property name="processButtonName" value="sample.button.submit" />
+		<property name="processClickListener" ref="confirmDeleteSampleListener" />
+		<property name="ResetButtonVisible" value="true" />
+		<property name="stopButtonName" value="sample.button.cancel" />
+		<property name="resetClickListener" ref="confirmDialogResetListener" />
+		<property name="visible" value="true" />
+		<property name="canCollapse" value="false" />
+	</bean>
+
+	<!-- No Result View -->
+	<bean id="NoResultView" class="com.dbs.portal.ui.component.view.NoResultView" scope="prototype">
+		<property name="visible" value="false" />
+	</bean>
+
+	<!-- listener -->
+	<bean id="submitEnquiryListener" class="com.dbs.portal.ui.portlet.sample.example.listener.EnquiryListener" scope="request" />
+
+	<bean id="exportReportListener" class="com.dbs.portal.ui.export.report.ExportReportListener" scope="request">
+		<property name="enquiryViewName" value="EnquiryView" />
+		<property name="tableViewList">
+			<list>
+				<value>SampleRecordView</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="confirmDialogResetListener" class="com.dbs.portal.ui.layout.listener.ConfirmDialogResetListener" scope="request" />
+
+	<bean id="dateRangeListener" class="com.dbs.portal.ui.portlet.sample.example.listener.DateRangeListener" scope="request">
+		<property name="enquiryViewName" value="EnquiryView" />
+	</bean>
+
+	<bean id="dateRangeValidator" class="com.dbs.portal.ui.validator.DateRangeValidator" scope="request">
+		<constructor-arg name="errorMessage" value="sample.criteria.dateValidation" />
+		<property name="dateField">
+			<list>
+				<util:constant static-field="com.dbs.portal.database.constants.SampleConstant.FROM_DATE" />
+				<util:constant static-field="com.dbs.portal.database.constants.SampleConstant.TO_DATE" />
+			</list>
+		</property>
+		<property name="enquiryViewName" value="EnquiryView" />
+		<property name="differenceType">
+			<util:constant static-field="java.util.Calendar.DATE" />
+		</property>
+		<property name="difference">
+			<value type="java.lang.Integer">14</value>
+		</property>
+	</bean>
+
+	<bean id="dateBeginEndValidator" class="com.dbs.portal.ui.validator.DateBeginEndValidator" scope="request">
+		<constructor-arg name="errorMessage" value="sample.criteria.dateBeginEndValidation" />
+		<property name="dateField">
+			<list>
+				<util:constant static-field="com.dbs.portal.database.constants.SampleConstant.FROM_DATE" />
+				<util:constant static-field="com.dbs.portal.database.constants.SampleConstant.TO_DATE" />
+			</list>
+		</property>
+		<property name="enquiryViewName" value="EnquiryView" />
+	</bean>
+
+	<bean id="dateBothFromToValidator" class="com.dbs.portal.ui.validator.DateBothFromToValidator" scope="request">
+		<constructor-arg name="errorMessage" value="sample.criteria.dateBothFromToValidation" />
+		<property name="dateField">
+			<list>
+				<util:constant static-field="com.dbs.portal.database.constants.SampleConstant.FROM_DATE" />
+				<util:constant static-field="com.dbs.portal.database.constants.SampleConstant.TO_DATE" />
+			</list>
+		</property>
+		<property name="enquiryViewName" value="EnquiryView" />
+	</bean>
+
+	<bean id="createSampleListener" class="com.dbs.portal.ui.portlet.sample.example.listener.CreateSampleListener" scope="request" />
+
+	<bean id="confirmCreateSampleListener" class="com.dbs.portal.ui.portlet.sample.example.listener.ConfirmCreateSampleListener" scope="request" />
+
+	<bean id="editSampleListener" class="com.dbs.portal.ui.portlet.sample.example.listener.EditSampleListener" scope="request" />
+
+	<bean id="confirmEditSampleListener" class="com.dbs.portal.ui.portlet.sample.example.listener.ConfirmEditSampleListener" scope="request" />
+
+	<bean id="deleteSampleListener" class="com.dbs.portal.ui.portlet.sample.example.listener.DeleteSampleListener" scope="request" />
+
+	<bean id="confirmDeleteSampleListener" class="com.dbs.portal.ui.portlet.sample.example.listener.ConfirmDeleteSampleListener" scope="request" />
+
+	<!-- Data Provider -->
+	<bean id="keyDataProvider" class="com.dbs.portal.ui.component.data.StaticDBDataProvider" scope="request">
+	    <property name="serviceClass" value="com.dbs.sample.db.service.impl.SampleServiceImpl" />
+	    <property name="functionName" value="getSampleList" />
+	    <property name="keyId">
+	        <util:constant static-field="com.dbs.portal.database.constants.SampleConstant.SKEY" />
+	    </property>
+	    <property name="valueList">
+	        <list>
+	            <util:constant static-field="com.dbs.portal.database.constants.SampleConstant.SKEY" />
+	        </list>
+	    </property>
+	</bean>
+	
+</beans>
