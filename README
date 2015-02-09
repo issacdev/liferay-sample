@@ -25,11 +25,19 @@ or update your maven repository with jar file in 'resource'
 ====================================================================
 ##### (3)	Project Build Dependency #####
 ====================================================================
-Step by Step as below:
+Before build any project, there are two important things:
+
+1) In Project 'db.parent', find Tag <modules>...</modules> in File 'pom.xml'.
+	-- rename three project in modules, and rename in your workspace (try not to duplicate with other project), they are :
+			<module>../com.dbs.sample.db.bean</module>
+			<module>../com.dbs.sample.db.dao</module>
+			<module>../com.dbs.sample.db.service</module>
+
+2) If there are more than one UI projects, add new project in File 'pom.xml' in Project 'com.dbs.portal.ui.parent'. 
+	a) Find Tag <modules> in 'pom.xml'
+	b) add new Tag <module> {your project name} </module>
+
+Then, step by Step to build your projects as below:
 1)	build Project 'CommonTools' with maven file - 'pom.xml'
 2)	build Project 'db.parent' with maven file - 'pom.xml'
 3)	build Project 'com.dbs.portal.ui.parent' with maven file - 'pom.xml'
-
-If there are more than one UI projects, add new project in File 'pom.xml' in Project 'com.dbs.portal.ui.parent'. 
-1) Find Tag <modules> in 'pom.xml'
-2) add new Tag <module> {your project name} </module>
