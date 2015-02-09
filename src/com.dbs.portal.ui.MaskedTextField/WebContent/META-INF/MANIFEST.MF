@@ -1,3 +1,0 @@
-Manifest-Version: 1.0
-Class-Path: 
-Vaadin-Widgetsets: com.dcb.portal.ui.maskpopupdatefield.MaskpopupdatefieldWidgetset
