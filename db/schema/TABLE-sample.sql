@@ -6,7 +6,7 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[sampl
 DROP TABLE [dbo].[sample]
 GO
 
-USE [FAST]
+USE [FAST_SAMPLE]
 GO
 
 /****** Object:  Table [dbo].[sample]    Script Date: 02/04/2015 14:40:01 ******/
