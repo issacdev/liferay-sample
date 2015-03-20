@@ -5,6 +5,7 @@ import java.util.Date;
 import com.dbs.db.dao.annotation.Audit;
 import com.dbs.db.dao.annotation.DatabaseField;
 import com.dbs.db.dao.annotation.PrimaryKey;
+import com.dbs.db.dao.annotation.ReferenceField;
 import com.dbs.db.dao.annotation.Sequence;
 import com.dbs.db.dao.annotation.TableName;
 import com.dbs.db.dao.annotation.UIKey;

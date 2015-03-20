@@ -11,25 +11,25 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="VAADIN_DOWNLOAD/gwt-dependencies/2.3.0/validation-api-1.0.0.GA-sources.jar"/>
-	<classpathentry kind="var" path="VAADIN_DOWNLOAD/gwt-dependencies/2.3.0/validation-api-1.0.0.GA.jar"/>
-	<classpathentry kind="var" path="VAADIN_DOWNLOAD/gwt-user/2.3.0/gwt-user.jar"/>
-	<classpathentry kind="var" path="VAADIN_DOWNLOAD/gwt-dev/2.3.0/gwt-dev.jar"/>
+	<classpathentry kind="var" path="GWT_HOME/gwt-2.6.0/validation-api-1.0.0.GA-sources.jar"/>
+	<classpathentry kind="var" path="GWT_HOME/gwt-2.6.0/validation-api-1.0.0.GA.jar"/>
+	<classpathentry kind="var" path="GWT_HOME/gwt-2.6.0/gwt-user.jar"/>
+	<classpathentry kind="var" path="GWT_HOME/gwt-2.6.0/gwt-dev.jar"/>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/com.liferay.ide.eclipse.server.tomcat.runtimeClasspathProvider/Liferay v6.1 CE (Tomcat 7)">
-		<attributes>
-			<attribute name="owner.project.facets" value="jst.web"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="var" path="ECLIPSE_HOME"/>
 	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
 		<attributes>
 			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry excluding="**" kind="src" output="target/test-classes" path="src/test/resources">
+		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>

@@ -5,6 +5,7 @@
 		<artifactId>com.dbs.portal.ui.parent</artifactId>
 		<groupId>com.dbs.portal</groupId>
 		<version>0.0.1</version>
+		<relativePath>../com.dbs.portal.ui.parent</relativePath>
 	</parent>
 	<groupId>com.dbs.portal</groupId>
 	<artifactId>com.dbs.portal.ui.portlet.sample.example</artifactId>

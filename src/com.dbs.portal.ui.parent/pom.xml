@@ -13,7 +13,7 @@
 		<module.version>0.0.1</module.version>
 		<perfectjpattern.version>1.0.2</perfectjpattern.version>
 
-		<war.outputDirectory>E:/DBS/Sample/build/</war.outputDirectory>
+		<war.outputDirectory>C:\app\liferay-porta-6.1-dbs-patched\deploy\</war.outputDirectory>
 		
 		<db.version>1.0.0</db.version>
 	</properties>
@@ -27,51 +27,43 @@
 				<artifactId>slf4j-log4j12</artifactId>
 				<version>1.7.7</version>
 				<type>jar</type>
-				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>log4j</groupId>
 				<artifactId>log4j</artifactId>
 				<version>1.2.16</version>
-				<scope>provided</scope>
 			</dependency>			
 			<dependency>
 				<groupId>commons-lang</groupId>
 				<artifactId>commons-lang</artifactId>
 				<version>2.5</version>
 				<type>jar</type>
-				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>commons-dbcp</groupId>
 				<artifactId>commons-dbcp</artifactId>
 				<version>1.4</version>
 				<type>jar</type>
-				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-email</artifactId>
 				<version>1.2</version>
-				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
 				<version>3.3.2</version>
-				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>commons-logging</groupId>
 				<artifactId>commons-logging</artifactId>
 				<version>1.1.1</version>
-				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>commons-pool</groupId>
 				<artifactId>commons-pool</artifactId>
 				<version>1.5.4</version>
-				<scope>provided</scope>
 			</dependency>
 
 			<dependency>
@@ -79,7 +71,6 @@
 				<artifactId>spring-context</artifactId>
 				<version>${spring.framework.version}</version>
 				<type>jar</type>
-				<scope>provided</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -89,55 +80,46 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>com.springsource.org.apache.commons.beanutils</artifactId>
 			<version>1.8.0</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-orm</artifactId>
 			<version>${spring.framework.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
 			<version>${spring.framework.version}</version>
 			<type>jar</type>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
 			<version>${spring.framework.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc-portlet</artifactId>
 			<version>${spring.framework.version}</version>
-			<scope>provided</scope>
 		</dependency>
  		<dependency>
 			<groupId>javax.portlet</groupId>
 			<artifactId>portlet-api</artifactId>
 			<version>2.0</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
 			<version>2.4</version>
-			<scope>provided</scope>
 		</dependency>
         <dependency>
             <groupId>com.liferay.portal</groupId>
             <artifactId>portal-service</artifactId>
             <version>6.1.2</version>
-            <scope>provided</scope>
         </dependency>
 
 		<dependency>
@@ -159,79 +141,69 @@
 			<groupId>com.jolbox</groupId>
 			<artifactId>bonecp</artifactId>
 			<version>0.8.0.RELEASE</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>11.0.2</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
 			<version>3.10-FINAL</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-user</artifactId>
 			<version>2.3.0</version>
-			<scope>provided</scope>
 		</dependency>
+		<!-- 
 		<dependency>
 			<groupId>com.microsoft.sqlserver</groupId>
 			<artifactId>sqljdbc4</artifactId>
 			<version>4.0</version>
 			<scope>provided</scope>
 		</dependency>
+		 -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
 			<version>2.2.3</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
 			<version>2.2.3</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 			<version>2.2.3</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.javassist</groupId>
 			<artifactId>javassist</artifactId>
 			<version>3.18.1-GA</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>javassist</groupId>
 			<artifactId>javassist</artifactId>
 			<version>3.4.GA</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.logging</groupId>
 			<artifactId>jboss-logging</artifactId>
 			<version>3.1.0.GA</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.spec.javax.transaction</groupId>
 			<artifactId>jboss-transaction-api_1.1_spec</artifactId>
 			<version>1.0.1.Final</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>antlr</groupId>
 			<artifactId>antlr</artifactId>
 			<version>2.7.7</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.vaadin</groupId>
@@ -327,8 +299,12 @@
 		</pluginManagement>
 	</build>
 	<modules>
-		<module>../com.dbs.portal.ui.common</module>
-		<module>../com.dbs.portal.ui.MaskedTextField</module>
+		<module>
+			../../../liferay-common/src/com.dbs.portal.ui.MaskedTextField
+		</module>
+		<module>
+			../../../liferay-common/src/com.dbs.portal.ui.common
+		</module>
 		<module>../com.dbs.portal.ui.portlet.sample.example</module>
 	</modules>
 </project>

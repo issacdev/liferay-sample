@@ -35,12 +35,13 @@
 			<version>2.5</version>
 			<type>jar</type>
 		</dependency>
+		<!--  
 		<dependency>
 			<groupId>com.microsoft.sqlserver</groupId>
 			<artifactId>sqljdbc4</artifactId>
 			<version>4.0</version>
 			<type>jar</type>
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<groupId>com.dbs.util</groupId>
 			<artifactId>CommonTools</artifactId>
@@ -114,6 +115,6 @@
 		<module>../com.dbs.sample.db.bean</module>
 		<module>../com.dbs.sample.db.dao</module>
 		<module>../com.dbs.sample.db.service</module>
-		<module>../db-core</module>
+		<module>../../../liferay-common/src/db-core</module>
 	</modules>
 </project>
