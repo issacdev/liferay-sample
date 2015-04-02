@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:int="http://www.springframework.org/schema/integration" xmlns:http="http://www.springframework.org/schema/integration/http" xmlns:jms="http://www.springframework.org/schema/integration/jms"
+	xmlns:httpinvoker="http://www.springframework.org/schema/integration/httpinvoker" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/integration
+	http://www.springframework.org/schema/integration/spring-integration-2.0.xsd
+	http://www.springframework.org/schema/integration/http
+	http://www.springframework.org/schema/integration/http/spring-integration-http-2.0.xsd
+	http://www.springframework.org/schema/integration/jms
+	http://www.springframework.org/schema/integration/jms/spring-integration-jms-2.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+
+	<!-- main windows -->
+	<bean id="MakerBaseWindow" class="com.dbs.portal.ui.portlet.past.base.MakerBaseWindow" scope="request">
+		<property name="mapOfLayout">
+			<map>
+				<entry key="MakerEnquiryView" value-ref="MakerEnquiryView" />
+				<entry key="MakerUTRecordView" value-ref="MakerUTRecordView" />
+				<!--
+				<entry key="NoResultView" value-ref="NoResultView" />
+				 -->
+			</map>
+		</property>
+		<!-- 
+		<property name="hiddenLayout">
+			<map>
+				<entry key="CreateSampleView" value-ref="CreateSampleView" />
+				<entry key="EditSampleView" value-ref="EditSampleView" />
+				<entry key="DeleteSampleView" value-ref="DeleteSampleView" />
+			</map>
+		</property>
+		 -->
+	</bean>
+	
+	<!-- controller class -->
+	<bean id="MakerController" class="org.springframework.aop.framework.ProxyFactoryBean" scope="request">
+		<property name="target" ref="MakerControllerObject" />
+		<property name="interceptorNames">
+			<list>
+				<value>TransactionMonitor</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="MakerControllerObject" class="com.dbs.portal.ui.portlet.past.control.MakerController" scope="request">
+		<property name="id" value="Maker" />
+		<property name="view" ref="MakerBaseWindow" />
+		<property name="userConfigService" ref="UserConfigService"/>
+		<property name="utTxnService" ref="UtTxnService"/>
+
+		<property name="mapOfListener">
+			<list>
+				<ref bean="MakerEnquiryListener"/>
+				<ref bean="MakerDataTypeChangeListener"/>
+			</list>
+		</property>
+	</bean>
+
+
+	
+	<bean id="MakerEnquiryView" class="com.dbs.portal.ui.component.view.BaseEnquiryView" scope="prototype">
+	
+		<constructor-arg name="labelWidth" value="120" />
+		<constructor-arg name="fieldWidth" value="10" />
+		<property name="requiredLabel" value="true" />
+		
+		<property name="processClickListener" ref="MakerEnquiryListener" />
+		
+		<property name="fieldList">
+			<list value-type="java.util.List">
+				<list value-type="com.dbs.portal.ui.component.view.FormField">
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="past.enquiry.maker.caption" />
+						<constructor-arg name="dataId" value="" />
+						<property name="columnSpan" value="40" />
+						<property name="staticField" value="true" />
+						<property name="styleList">
+							<list>
+								<value>dbsCaption</value>
+							</list>
+						</property>
+					</bean>
+				</list>
+				
+				<list value-type="com.dbs.portal.ui.component.view.FormField">
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg value="COMBOBOX" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="past.criteria.maker.datatype" />
+						<constructor-arg name="dataId">
+							<util:constant static-field="com.dbs.past.db.bean.constants.UserConfigConstant.DATA_TYPE" />
+						</constructor-arg>
+						<property name="columnSpan" value="20" />
+						<property name="maxLength" value="20" />
+						<property name="allowEmptyItem" value="false" />
+						<property name="listenerList">
+							<list>
+								<ref bean="MakerDataTypeChangeListener" />
+							</list>
+						</property>
+					</bean>
+				</list>
+			</list>
+		</property>
+	</bean>
+	 
+	<bean id="MakerUTRecordView" class="com.dbs.portal.ui.component.view.BaseTableView" scope="prototype">
+		<property name="selectedPageList">
+			<list value-type="java.lang.String">
+				<value>5</value>
+				<value>10</value>
+				<value>25</value>
+				<value>50</value>
+			</list>
+		</property>
+		<property name="selectedPageLength" value="25" />
+		<property name="columnHeader">
+			<list value-type="java.lang.String">
+				<value>past.view.ut.maker.action</value>
+				<value>past.view.ut.maker.branchid</value>
+				<value>past.view.ut.maker.ref</value>
+				<value>past.view.ut.maker.house</value>
+				<value>past.view.ut.maker.fund</value>
+				<value>past.view.ut.maker.fund.ccy</value>
+				<value>past.view.ut.maker.fund.net</value>
+				<value>past.view.ut.maker.fund.com</value>
+				<value>past.view.ut.maker.fund.comhkd</value>
+
+			</list>
+		</property>
+		<property name="visibleColumnHeader">
+			<list>
+				<util:constant static-field="com.dbs.past.db.bean.constants.UtTxnConstant.ACTION" />
+				<util:constant static-field="com.dbs.past.db.bean.constants.UtTxnConstant.BRANCH_ID" />
+				<util:constant static-field="com.dbs.past.db.bean.constants.UtTxnConstant.REF" />
+				<util:constant static-field="com.dbs.past.db.bean.constants.UtTxnConstant.HOUSE" />
+				<util:constant static-field="com.dbs.past.db.bean.constants.UtTxnConstant.FUND" />
+				<util:constant static-field="com.dbs.past.db.bean.constants.UtTxnConstant.F_CCY" />
+				<util:constant static-field="com.dbs.past.db.bean.constants.UtTxnConstant.F_HSE_NET" />
+				<util:constant static-field="com.dbs.past.db.bean.constants.UtTxnConstant.F_HSE_COM" />
+				<util:constant static-field="com.dbs.past.db.bean.constants.UtTxnConstant.F_HSE_COM_HKD" />				
+				
+			</list>
+		</property>
+		<property name="visible" value="false" />
+		<property name="pagedTableParameter">
+			<list>
+				<bean class="com.dbs.portal.ui.component.pagetable.MultiPagedTableParameterList">
+					<constructor-arg name="columnName">
+						<util:constant static-field="com.dbs.past.db.bean.constants.UtTxnConstant.ACTION" />
+					</constructor-arg>
+					<property name="columnType">
+						<value type="com.dbs.portal.ui.component.pagetable.PagedTableParameterType">MULTIBUTTON</value>
+					</property>
+					<property name="parameters">
+						<list>
+							<bean class="com.dbs.portal.ui.component.pagetable.MultiPagedTableParameter">
+								<property name="labelKey" value="past.button.edit" />
+							</bean>
+						</list>
+					</property>
+					<property name="alignment">
+						<util:constant static-field="com.vaadin.ui.Table.ALIGN_CENTER" />
+					</property>
+				</bean>
+			</list>
+		</property>	
+	</bean>	
+	
+	<!-- Listener -->
+	<bean id="MakerEnquiryListener" class="com.dbs.portal.ui.portlet.past.listener.MakerEnquiryListener" scope="request"/>
+
+	<bean id="MakerDataTypeChangeListener" class="com.dbs.portal.ui.portlet.past.listener.MakerDataTypeChangeListener" scope="request"/>
+
+</beans>

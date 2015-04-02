@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:int="http://www.springframework.org/schema/integration" xmlns:http="http://www.springframework.org/schema/integration/http" xmlns:jms="http://www.springframework.org/schema/integration/jms"
+	xmlns:httpinvoker="http://www.springframework.org/schema/integration/httpinvoker" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/integration
+	http://www.springframework.org/schema/integration/spring-integration-2.0.xsd
+	http://www.springframework.org/schema/integration/http
+	http://www.springframework.org/schema/integration/http/spring-integration-http-2.0.xsd
+	http://www.springframework.org/schema/integration/jms
+	http://www.springframework.org/schema/integration/jms/spring-integration-jms-2.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+
+
+	<import resource="maker-context.xml"/>
+	<import resource="checker-context.xml"/>
+	
+	<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
+
+	<!-- InternationMesssage Handler -->
+	<bean id="messaging" class="com.dbs.portal.ui.util.Messages" scope="prototype" />
+
+	<!-- DB Setting - Start -->
+	<bean id="TransactionMonitor" class="com.dbs.db.transaction.TransactionMonitor" />
+
+	<!-- Service -->
+	<bean id="UserConfigService" class="com.dbs.past.db.service.impl.UserConfigServiceImpl">
+		<property name="dao" ref="UserConfigDao"/>
+	</bean>
+	
+	<bean id="UtTxnService" class="com.dbs.past.db.service.impl.UtTxnServiceImpl">
+		<property name="dao" ref="UtTxnDao"/>
+	</bean>
+	
+	<!-- DAO -->
+	<bean id="UserConfigDao" class="com.dbs.past.db.dao.impl.UserConfigDaoImpl">
+	</bean>
+
+	<bean id="UtTxnDao" class="com.dbs.past.db.dao.impl.UtTxnDaoImpl">
+	</bean>
+
+	<!-- Data Provider -->
+	<bean id="userConfigDataProvider" class="com.dbs.portal.ui.component.data.StaticDBDataProvider" scope="request">
+	    <property name="serviceClassObj" ref="UserConfigService"/>
+	    <property name="functionName" value="getUserConfigMapList" />
+	    <property name="keyId">
+	        <util:constant static-field="com.dbs.past.db.bean.constants.UserConfigConstant.DATA_TYPE" />
+	    </property>
+	    <property name="valueId">
+	        <util:constant static-field="com.dbs.past.db.bean.constants.UserConfigConstant.DATA_TYPE" />
+	    </property>
+	</bean>
+	
+</beans>

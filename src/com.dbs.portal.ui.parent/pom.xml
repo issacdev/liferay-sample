@@ -1,5 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.dbs.portal</groupId>
 	<artifactId>com.dbs.portal.ui.parent</artifactId>
@@ -13,7 +13,7 @@
 		<module.version>0.0.1</module.version>
 		<perfectjpattern.version>1.0.2</perfectjpattern.version>
 
-		<war.outputDirectory>C:\app\liferay-porta-6.1-dbs-patched\deploy\</war.outputDirectory>
+		<war.outputDirectory>/Users/issaclau/app/Liferay/deploy</war.outputDirectory>
 		
 		<db.version>1.0.0</db.version>
 	</properties>
@@ -137,6 +137,24 @@
 			<artifactId>com.dbs.sample.db.service</artifactId>
 			<version>${db.version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.dbs.db</groupId>
+			<artifactId>com.dbs.past.db.bean</artifactId>
+			<version>${db.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.dbs.db</groupId>
+			<artifactId>com.dbs.past.db.dao</artifactId>
+			<version>${db.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.dbs.db</groupId>
+			<artifactId>com.dbs.past.db.service</artifactId>
+			<version>${db.version}</version>
+		</dependency>
+		
+				
 		<dependency>
 			<groupId>com.jolbox</groupId>
 			<artifactId>bonecp</artifactId>
@@ -189,16 +207,6 @@
 			<groupId>javassist</groupId>
 			<artifactId>javassist</artifactId>
 			<version>3.4.GA</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.logging</groupId>
-			<artifactId>jboss-logging</artifactId>
-			<version>3.1.0.GA</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.spec.javax.transaction</groupId>
-			<artifactId>jboss-transaction-api_1.1_spec</artifactId>
-			<version>1.0.1.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>antlr</groupId>
@@ -280,6 +288,10 @@
 						<warSourceDirectory>WebContent</warSourceDirectory>
 						<warName>${war.name}</warName>
 						<outputDirectory>${war.outputDirectory}</outputDirectory>
+						<packagingExcludes>
+							WEB-INF/lib/gwt-user-2.3.0.jar,
+							WEB-INF/lib/servlet-api-2.4.jar
+						</packagingExcludes>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -299,12 +311,15 @@
 		</pluginManagement>
 	</build>
 	<modules>
-		<module>
-			../../../liferay-common/src/com.dbs.portal.ui.MaskedTextField
-		</module>
+		
+		
+		
 		<module>
 			../../../liferay-common/src/com.dbs.portal.ui.common
 		</module>
-		<module>../com.dbs.portal.ui.portlet.sample.example</module>
-	</modules>
+		<module>
+			../../../liferay-common/src/com.dbs.portal.ui.MaskedTextField
+		</module>
+    <module>com.dbs.portal.ui.portlet.past</module>
+  </modules>
 </project>
