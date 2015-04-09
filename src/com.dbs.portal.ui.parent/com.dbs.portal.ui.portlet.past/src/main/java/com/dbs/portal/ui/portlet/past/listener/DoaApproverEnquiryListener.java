@@ -1,24 +1,18 @@
 package com.dbs.portal.ui.portlet.past.listener;
 
-import java.util.List;
 import java.util.Map;
 
 import com.dbs.past.db.bean.UserConfig;
 import com.dbs.past.db.bean.constants.UserConfigConstant;
-import com.dbs.portal.ui.component.application.IApplication;
-import com.dbs.portal.ui.component.data.TableDBDataProvider;
-import com.dbs.portal.ui.component.pagetable.PagedTable;
 import com.dbs.portal.ui.component.view.BaseEnquiryView;
 import com.dbs.portal.ui.component.view.IController;
 import com.dbs.portal.ui.component.view.IInit;
-import com.dbs.portal.ui.component.view.ITableResultView;
 import com.dbs.portal.ui.component.view.IWindow;
-import com.dbs.portal.ui.portlet.past.control.CheckerController;
+import com.dbs.portal.ui.portlet.past.control.DoaApproverController;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.Window;
 
-public class CheckerEnquiryListener implements ClickListener, IInit {
+public class DoaApproverEnquiryListener implements ClickListener, IInit {
 
 	private IWindow view;
 	private IController control;
@@ -42,19 +36,19 @@ public class CheckerEnquiryListener implements ClickListener, IInit {
 	public void buttonClick(ClickEvent event) {
 		
 		BaseEnquiryView enquiryView = (BaseEnquiryView) view.getView(viewName);
-		CheckerController checkerController = (CheckerController)control;
+		DoaApproverController controller = (DoaApproverController)control;
 		
 		Map<String, Object> criteriaMap = enquiryView.submit(false);
 		UserConfig userConfig = (UserConfig)criteriaMap.get(UserConfigConstant.DATA_TYPE);
 		
 		if(userConfig != null){
 			
-			checkerController.setUserConfig(userConfig);
-			checkerController.refreshtable();
+			controller.setUserConfig(userConfig);
+			controller.refreshtable();
 			
 		}
 		else{
-			checkerController.showMessage("past.submit.no.dataType");
+			controller.showMessage("past.submit.no.dataType");
 		}
 	}
 }

@@ -4,6 +4,7 @@
     <category name="DBS">
         <portlet id="past-maker-portlet"/>
         <portlet id="past-checker-portlet"/>
+        <portlet id="past-doa-approval-portlet"/>
     </category>
     
     

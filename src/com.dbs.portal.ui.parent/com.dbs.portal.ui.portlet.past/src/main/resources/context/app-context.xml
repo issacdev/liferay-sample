@@ -16,6 +16,7 @@
 
 	<import resource="maker-context.xml"/>
 	<import resource="checker-context.xml"/>
+	<import resource="doa-context.xml"/>
 	
 	<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
 
@@ -26,21 +27,28 @@
 	<bean id="TransactionMonitor" class="com.dbs.db.transaction.TransactionMonitor" />
 
 	<!-- Service -->
-	<bean id="UserConfigService" class="com.dbs.past.db.service.impl.UserConfigServiceImpl">
-		<property name="dao" ref="UserConfigDao"/>
+	<bean id="userConfigService" class="com.dbs.past.db.service.impl.UserConfigServiceImpl">
+		<property name="dao" ref="userConfigDao"/>
 	</bean>
 	
-	<bean id="UtTxnService" class="com.dbs.past.db.service.impl.UtTxnServiceImpl">
-		<property name="dao" ref="UtTxnDao"/>
+	<bean id="utTxnService" class="com.dbs.past.db.service.impl.UtTxnServiceImpl">
+		<property name="dao" ref="utTxnDao"/>
+	</bean>
+	
+	<bean id="utTxnDoaHistoryService" class="com.dbs.past.db.service.impl.UtTxnDoaHistoryServiceImpl">
+		<property name="dao" ref="utTxnDoaHistoryDao"/>
 	</bean>
 	
 	<!-- DAO -->
-	<bean id="UserConfigDao" class="com.dbs.past.db.dao.impl.UserConfigDaoImpl">
+	<bean id="userConfigDao" class="com.dbs.past.db.dao.impl.UserConfigDaoImpl">
 	</bean>
 
-	<bean id="UtTxnDao" class="com.dbs.past.db.dao.impl.UtTxnDaoImpl">
+	<bean id="utTxnDao" class="com.dbs.past.db.dao.impl.UtTxnDaoImpl">
 	</bean>
 
+	<bean id="utTxnDoaHistoryDao" class="com.dbs.past.db.dao.impl.UtTxnDoaHistoryDaoImpl">
+	</bean>
+	
 	<!-- Data Provider -->
 	<bean id="userConfigDataProvider" class="com.dbs.portal.ui.component.data.StaticDBDataProvider" scope="request">
 	    <property name="serviceClassObj" ref="UserConfigService"/>
@@ -53,4 +61,17 @@
 	    </property>
 	</bean>
 	
+	
+	<bean id="controllerUtil" class="com.dbs.portal.ui.portlet.past.control.ControllerUtil" scope="prototype">
+		<property name="userConfigService" ref="userConfigService"/>
+		<property name="utTxnService" ref="utTxnService"/>
+		<property name="utTxnDoaHistoryService" ref="utTxnDoaHistoryService"/>
+	</bean>
+	
+	
+	
+	<bean id="popupCancelClickListener" class="com.dbs.portal.ui.portlet.past.listener.PopupCancelClickListener" scope="request"/>
+	
+	<bean id="dataTypeChangeListener" class="com.dbs.portal.ui.portlet.past.listener.DataTypeChangeListener" scope="request"/>
+		
 </beans>

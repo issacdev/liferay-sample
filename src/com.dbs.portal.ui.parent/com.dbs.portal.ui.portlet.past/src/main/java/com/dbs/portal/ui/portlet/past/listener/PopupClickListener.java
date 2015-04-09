@@ -10,11 +10,10 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 
-public class CheckerRecordProceedClickListener implements ClickListener, IInit {
+public class PopupClickListener implements ClickListener, IInit {
 
 	private IWindow view;
 	private IController control;
-	
 	private String popUpViewName;
 	
 	@Override
@@ -27,11 +26,15 @@ public class CheckerRecordProceedClickListener implements ClickListener, IInit {
 		this.control = control;
 	}
 
+	public void setPopUpViewName(String popUpViewName) {
+		this.popUpViewName = popUpViewName;
+	}
+	
 	@Override
 	public void buttonClick(ClickEvent event) {
 		
 		Window window = new Window();
-		IEnquiryView enquiryView = (IEnquiryView) view.getView("checkerConfirmPopUpView");
+		IEnquiryView enquiryView = (IEnquiryView) view.getView(popUpViewName);
 		
 		enquiryView.resetPage();
 		window.addComponent((AbstractLayout) enquiryView);
@@ -41,9 +44,4 @@ public class CheckerRecordProceedClickListener implements ClickListener, IInit {
 		this.view.addWindow(window);
 	}
 
-	public void setPopUpViewName(String popUpViewName) {
-		this.popUpViewName = popUpViewName;
-	}
-	
-	
 }

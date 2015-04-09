@@ -39,7 +39,4 @@ public class UtTxnConstant {
 	public final static String CHECKED_BY = "CHECKED_BY";
 	public final static String CHECKED_TIME = "CHECKED_TIME";
 	
-	public final static String STATUS_MODIFIED = "M";
-	public final static String STATUS_CHECKED = "C";
-	
 }

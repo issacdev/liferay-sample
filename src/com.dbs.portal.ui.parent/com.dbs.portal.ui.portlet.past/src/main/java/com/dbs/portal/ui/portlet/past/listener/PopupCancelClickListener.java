@@ -3,11 +3,11 @@ package com.dbs.portal.ui.portlet.past.listener;
 import com.dbs.portal.ui.component.view.IController;
 import com.dbs.portal.ui.component.view.IInit;
 import com.dbs.portal.ui.component.view.IWindow;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.Window;
 
-public class CancelPopupClickListener implements ClickListener, IInit {
+public class PopupCancelClickListener implements ClickListener, IInit {
 
 	private IWindow view;
 	private IController control;

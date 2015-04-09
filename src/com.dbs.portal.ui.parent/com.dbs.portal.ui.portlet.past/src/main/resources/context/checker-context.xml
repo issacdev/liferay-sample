@@ -17,11 +17,8 @@
 	<bean id="CheckerBaseWindow" class="com.dbs.portal.ui.portlet.past.base.CheckerBaseWindow" scope="request">
 		<property name="mapOfLayout">
 			<map>
-				<entry key="CheckerEnquiryView" value-ref="CheckerEnquiryView" />
-				<entry key="CheckerUTRecordView" value-ref="CheckerUTRecordView"/>
-				<!--
-				<entry key="NoResultView" value-ref="NoResultView" />
-				 -->
+				<entry key="checkerEnquiryView" value-ref="checkerEnquiryView" />
+				<entry key="checkerUTRecordView" value-ref="checkerUTRecordView"/>
 			</map>
 		</property>
 		<property name="hiddenLayout">
@@ -44,35 +41,34 @@
 	<bean id="CheckerControllerObject" class="com.dbs.portal.ui.portlet.past.control.CheckerController" scope="request">
 		<property name="id" value="Checker" />
 		<property name="view" ref="CheckerBaseWindow" />
-		<property name="userConfigService" ref="UserConfigService"/>
-		<property name="utTxnService" ref="UtTxnService"/>
-
 		<property name="mapOfListener">
 			<list>
 				<ref bean="checkerEnquiryListener" />
-				<ref bean="checkerDataTypeChangeListener"/>
+				<ref bean="checkerDataTypeListener"/>
 				<ref bean="checkerSubmitClickListener"/>
-				<ref bean="checkerRecordProceedClickListener"/>
-				<ref bean="cancelPopupClickListener"/>
+				<ref bean="checkerPopupClickListener"/>
+				<ref bean="popupCancelClickListener"/>
 			</list>
 		</property>
+		<property name="controllerUtil" ref="controllerUtil"/>
 	</bean>
 
 	<!-- view -->
-	<bean id="CheckerEnquiryView" class="com.dbs.portal.ui.component.view.BaseEnquiryView" scope="prototype">
+	<bean id="checkerEnquiryView" class="com.dbs.portal.ui.component.view.BaseEnquiryView" scope="prototype">
 	
 		<constructor-arg name="labelWidth" value="120" />
 		<constructor-arg name="fieldWidth" value="10" />
 		<property name="requiredLabel" value="true" />
 		
 		<property name="processClickListener" ref="checkerEnquiryListener" />
+		<property name="ResetButtonVisible" value="false" />
 		
 		<property name="fieldList">
 			<list value-type="java.util.List">
 				<list value-type="com.dbs.portal.ui.component.view.FormField">
 					<bean class="com.dbs.portal.ui.component.view.FormField">
 						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType" />
-						<constructor-arg name="fieldNameKey" value="past.enquiry.checker.caption" />
+						<constructor-arg name="fieldNameKey" value="past.caption.enquiry" />
 						<constructor-arg name="dataId" value="" />
 						<property name="columnSpan" value="40" />
 						<property name="staticField" value="true" />
@@ -88,7 +84,7 @@
 				<list value-type="com.dbs.portal.ui.component.view.FormField">
 					<bean class="com.dbs.portal.ui.component.view.FormField">
 						<constructor-arg value="COMBOBOX" type="com.dbs.portal.ui.component.view.FormFieldType" />
-						<constructor-arg name="fieldNameKey" value="past.criteria.checker.datatype" />
+						<constructor-arg name="fieldNameKey" value="past.criteria.datatype" />
 						<constructor-arg name="dataId">
 							<util:constant static-field="com.dbs.past.db.bean.constants.UserConfigConstant.DATA_TYPE" />
 						</constructor-arg>
@@ -100,9 +96,10 @@
 						<property name="allowEmptyItem" value="false" />
 						<property name="listenerList">
 							<list>
-								<ref bean="checkerDataTypeChangeListener" />
+								<ref bean="checkerDataTypeListener" />
 							</list>
 						</property>
+						<property name="immediate" value="true"/>
 					</bean>
 				</list>
 					
@@ -152,12 +149,12 @@
 		<property name="processClickListener" ref="checkerSubmitClickListener" />  
 		<property name="ResetButtonVisible" value="true" />
 		<property name="stopButtonName" value="past.button.back" />
-		<property name="resetClickListener" ref="cancelPopupClickListener" />
+		<property name="resetClickListener" ref="popupCancelClickListener" />
 		<property name="visible" value="true" />
 		<property name="canCollapse" value="false" />
 	</bean>	
 	 
-	<bean id="CheckerUTRecordView" class="com.dbs.portal.ui.component.view.BaseTableView" scope="prototype">
+	<bean id="checkerUTRecordView" class="com.dbs.portal.ui.component.view.BaseTableView" scope="prototype">
 		<property name="selectedPageList">
 			<list value-type="java.lang.String">
 				<value>5</value>
@@ -222,22 +219,24 @@
 		<property name="processButtonName" value="past.button.proceed" />
 		<property name="processButtonListenerList">
 			<list>
-				<ref bean="checkerRecordProceedClickListener" />
+				<ref bean="checkerPopupClickListener" />
 			</list>
 		</property>
 	</bean>	
 	
 	<!-- Listener -->
-	<bean id="checkerEnquiryListener" class="com.dbs.portal.ui.portlet.past.listener.CheckerEnquiryListener" scope="request"/>
-	
-	<bean id="checkerDataTypeChangeListener" class="com.dbs.portal.ui.portlet.past.listener.CheckerDataTypeChangeListener" scope="request"/>
+	<bean id="checkerEnquiryListener" class="com.dbs.portal.ui.portlet.past.listener.CheckerEnquiryListener" scope="request">
+		<property name="viewName" value="checkerEnquiryView" />
+	</bean>
 	
 	<bean id="checkerSubmitClickListener" class="com.dbs.portal.ui.portlet.past.listener.CheckerSubmitClickListener" scope="request"/>
 	
-	<bean id="checkerRecordProceedClickListener" class="com.dbs.portal.ui.portlet.past.listener.CheckerRecordProceedClickListener" scope="request">
+	<bean id="checkerPopupClickListener" class="com.dbs.portal.ui.portlet.past.listener.PopupClickListener" scope="request">
 		<property name="popUpViewName" value="checkerConfirmPopUpView" />
 	</bean>
-
-	<bean id="cancelPopupClickListener" class="com.dbs.portal.ui.portlet.past.listener.CancelPopupClickListener" scope="request"/>
-
+	
+	<bean id="checkerDataTypeListener" class="com.dbs.portal.ui.portlet.past.listener.CheckerDataTypeListener" scope="request">
+		<property name="viewName" value="checkerEnquiryView" />
+	</bean>
+	
 </beans>

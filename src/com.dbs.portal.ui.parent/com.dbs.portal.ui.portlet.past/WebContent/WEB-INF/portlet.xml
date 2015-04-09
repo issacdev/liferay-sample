@@ -60,12 +60,36 @@
         
         <!-- Not always required but Liferay uses these. -->
         <portlet-info>
-            <title>PAST Checker Portlet</title>
+            <title>PAST Checker</title>
             <short-title>past checker porlet</short-title>
         </portlet-info>
     </portlet>
 
-   
+    <portlet>
+        <portlet-name>past-doa-approval-portlet</portlet-name>
+        <display-name>PAST DOA Approval Portlet</display-name>
+        
+        <!-- Liferay Vaadin Setting -->
+        <portlet-class>com.vaadin.terminal.gwt.server.ApplicationPortlet2</portlet-class>
+        
+        <init-param>
+            <name>application</name>
+            <value>com.dbs.portal.ui.portlet.past.control.DoaApproverApplication</value>
+        </init-param>
+        
+        <!-- Supported portlet modes and content types. -->
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>view</portlet-mode>
+        </supports>
+        
+        <!-- Not always required but Liferay uses these. -->
+        <portlet-info>
+            <title>PAST DOA Approval</title>
+            <short-title>past doa approval porlet</short-title>
+        </portlet-info>
+    </portlet>
+    
  <!-- 
     <portlet>
         <portlet-name>past-checker-portlet</portlet-name>

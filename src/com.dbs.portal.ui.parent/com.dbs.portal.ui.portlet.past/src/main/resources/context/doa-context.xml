@@ -12,29 +12,9 @@
 	http://www.springframework.org/schema/integration/jms/spring-integration-jms-2.0.xsd
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
 	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
-
-	<!-- main windows -->
-	<bean id="MakerBaseWindow" class="com.dbs.portal.ui.portlet.past.base.MakerBaseWindow" scope="request">
-		<property name="mapOfLayout">
-			<map>
-				<entry key="makerEnquiryView" value-ref="makerEnquiryView" />
-				<entry key="makerUTRecordView" value-ref="makerUTRecordView" />
-			</map>
-		</property>
-		<!-- 
-		<property name="hiddenLayout">
-			<map>
-				<entry key="CreateSampleView" value-ref="CreateSampleView" />
-				<entry key="EditSampleView" value-ref="EditSampleView" />
-				<entry key="DeleteSampleView" value-ref="DeleteSampleView" />
-			</map>
-		</property>
-		 -->
-	</bean>
-	
-	<!-- controller class -->
-	<bean id="MakerController" class="org.springframework.aop.framework.ProxyFactoryBean" scope="request">
-		<property name="target" ref="MakerControllerObject" />
+		
+	<bean id="DoaApproverController" class="org.springframework.aop.framework.ProxyFactoryBean" scope="request">
+		<property name="target" ref="doaApproverControllerObject" />
 		<property name="interceptorNames">
 			<list>
 				<value>TransactionMonitor</value>
@@ -42,28 +22,45 @@
 		</property>
 	</bean>
 	
-	<bean id="MakerControllerObject" class="com.dbs.portal.ui.portlet.past.control.MakerController" scope="request">
-		<property name="id" value="Maker" />
-		<property name="view" ref="MakerBaseWindow" />
+	<!-- controller class -->
+	<bean id="doaApproverControllerObject" class="com.dbs.portal.ui.portlet.past.control.DoaApproverController" scope="request">
+		<property name="id" value="DoaApprover" />
+		<property name="view" ref="DoaApproverBaseWindow" />
 		<property name="mapOfListener">
 			<list>
-				<ref bean="makerEnquiryListener"/>
-				<ref bean="makerdataTypeChangeListener"/>
+				<ref bean="doaApproverEnquiryListener" />
+				<ref bean="doaApproverSubmitClickListener"/>
+				<ref bean="doaApproverPopupClickListener"/>
+				<ref bean="doaApproverDataTypeListener"/>
+				<ref bean="popupCancelClickListener"/>
 			</list>
 		</property>
 		<property name="controllerUtil" ref="controllerUtil"/>
+		<property name="utTxnDoaHistoryService" ref="utTxnDoaHistoryService"/>
 	</bean>
 
-
+	<!-- main windows -->
+	<bean id="DoaApproverBaseWindow" class="com.dbs.portal.ui.portlet.past.base.DoaApproverBaseWindow" scope="request">
+		<property name="mapOfLayout">
+			<map>
+				<entry key="doaApproverEnquiryView" value-ref="doaApproverEnquiryView" />
+				<entry key="doaApproverRecordView" value-ref="doaApproverRecordView"/>
+			</map>
+		</property>
+		<property name="hiddenLayout">
+			<map>
+				<entry key="doaApproverConfirmPopUpView" value-ref="doaApproverConfirmPopUpView" />
+			</map>
+		</property>
+	</bean>
 	
-	<bean id="makerEnquiryView" class="com.dbs.portal.ui.component.view.BaseEnquiryView" scope="prototype">
+	
+	<!-- view -->
+	<bean id="doaApproverEnquiryView" class="com.dbs.portal.ui.component.view.BaseEnquiryView" scope="prototype">
 	
 		<constructor-arg name="labelWidth" value="120" />
 		<constructor-arg name="fieldWidth" value="10" />
 		<property name="requiredLabel" value="true" />
-		
-		<property name="processClickListener" ref="makerEnquiryListener" />
-		
 		<property name="fieldList">
 			<list value-type="java.util.List">
 				<list value-type="com.dbs.portal.ui.component.view.FormField">
@@ -80,7 +77,7 @@
 						</property>
 					</bean>
 				</list>
-				
+
 				<list value-type="com.dbs.portal.ui.component.view.FormField">
 					<bean class="com.dbs.portal.ui.component.view.FormField">
 						<constructor-arg value="COMBOBOX" type="com.dbs.portal.ui.component.view.FormFieldType" />
@@ -88,21 +85,28 @@
 						<constructor-arg name="dataId">
 							<util:constant static-field="com.dbs.past.db.bean.constants.UserConfigConstant.DATA_TYPE" />
 						</constructor-arg>
+						<property name="defaultSelect">
+							<value type="java.lang.Integer">1</value>
+						</property>
 						<property name="columnSpan" value="20" />
 						<property name="maxLength" value="20" />
 						<property name="allowEmptyItem" value="false" />
 						<property name="listenerList">
 							<list>
-								<ref bean="makerdataTypeChangeListener" />
+								<ref bean="doaApproverDataTypeListener" />
 							</list>
 						</property>
 					</bean>
 				</list>
 			</list>
 		</property>
+		
+	<property name="processClickListener" ref="doaApproverEnquiryListener" />
+	<property name="ResetButtonVisible" value="false" />
+	
 	</bean>
-	 
-	<bean id="makerUTRecordView" class="com.dbs.portal.ui.component.view.BaseTableView" scope="prototype">
+	
+	<bean id="doaApproverRecordView" class="com.dbs.portal.ui.component.view.BaseTableView" scope="prototype">
 		<property name="selectedPageList">
 			<list value-type="java.lang.String">
 				<value>5</value>
@@ -153,7 +157,7 @@
 					<property name="parameters">
 						<list>
 							<bean class="com.dbs.portal.ui.component.pagetable.MultiPagedTableParameter">
-								<property name="labelKey" value="past.button.edit" />
+								<property name="labelKey" value="past.button.detail" />
 							</bean>
 						</list>
 					</property>
@@ -163,15 +167,64 @@
 				</bean>
 			</list>
 		</property>	
+		<property name="processButtonVisible" value="true" />
+		<property name="processButtonName" value="past.button.proceed" />
+		<property name="processButtonListenerList">
+			<list>
+				<ref bean="doaApproverPopupClickListener" />
+			</list>
+		</property>
+	</bean>	
+
+
+	<bean id="doaApproverConfirmPopUpView" class="com.dbs.portal.ui.component.view.BaseEnquiryView" scope="prototype">
+		<constructor-arg name="labelWidth" value="20" />
+		<constructor-arg name="fieldWidth" value="10" />
+		<property name="requiredLabel" value="true" />
+		<property name="supportPageReset" value="false" />
+		<property name="fieldList">
+			<list value-type="java.util.List">
+				<list value-type="com.dbs.portal.ui.component.view.FormField">
+					<bean class="com.dbs.portal.ui.component.view.FormField">
+						<constructor-arg name="fieldType" value="LABEL" type="com.dbs.portal.ui.component.view.FormFieldType" />
+						<constructor-arg name="fieldNameKey" value="past.doa.caption.confirm" />
+						<constructor-arg name="dataId" value="" />
+						<property name="columnSpan" value="30" />
+						<property name="staticField" value="true" />
+						<property name="styleList">
+							<list>
+								<value>dbsCaption</value>
+							</list>
+						</property>
+					</bean>
+				</list>
+			</list>
+		</property>
+		<property name="ProcessButtonVisible" value="true" />
+		<property name="processButtonName" value="past.button.confirm" />
+		<property name="processClickListener" ref="doaApproverSubmitClickListener" />  
+		<property name="ResetButtonVisible" value="true" />
+		<property name="stopButtonName" value="past.button.back" />
+		<property name="resetClickListener" ref="popupCancelClickListener" />
+		<property name="visible" value="true" />
+		<property name="canCollapse" value="false" />
 	</bean>	
 	
+	
 	<!-- Listener -->
-	<bean id="makerEnquiryListener" class="com.dbs.portal.ui.portlet.past.listener.MakerEnquiryListener" scope="request">
-		<property name="viewName" value="makerEnquiryView" />
+	<bean id="doaApproverEnquiryListener" class="com.dbs.portal.ui.portlet.past.listener.DoaApproverEnquiryListener" scope="request">
+		<property name="viewName" value="doaApproverEnquiryView"/>
 	</bean>
-
-	<bean id="makerdataTypeChangeListener" class="com.dbs.portal.ui.portlet.past.listener.MakerDataTypeChangeListener" scope="request">
-		<property name="viewName" value="makerEnquiryView" />
+	
+	<bean id="doaApproverPopupClickListener" class="com.dbs.portal.ui.portlet.past.listener.PopupClickListener" scope="request">
+		<property name="popUpViewName" value="doaApproverConfirmPopUpView" />
 	</bean>
-
+			
+	<bean id="doaApproverSubmitClickListener" class="com.dbs.portal.ui.portlet.past.listener.DoaApproverSubmitClickListener" scope="request">
+	</bean>		
+	
+	<bean id="doaApproverDataTypeListener" class="com.dbs.portal.ui.portlet.past.listener.DoaApproverDataTypeListener" scope="request">
+		<property name="viewName" value="doaApproverEnquiryView" />
+	</bean>
+				 
 </beans>

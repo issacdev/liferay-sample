@@ -26,6 +26,11 @@ public class UserConfig {
 	@DatabaseField("ETL_PATH")
 	private String etlPath;
 	
+	@DatabaseField("DOA_ENABLE")
+	private Boolean doaEnable;
+	
+	@DatabaseField("DOA_COUNT")
+	private Integer doaCount;
 	
 	public String getTableView() {
 		return tableView;
@@ -56,5 +61,17 @@ public class UserConfig {
 	}
 	public void setEtlPath(String etlPath) {
 		this.etlPath = etlPath;
+	}
+	public Boolean getDoaEnable() {
+		return doaEnable;
+	}
+	public void setDoaEnable(Boolean doaEnable) {
+		this.doaEnable = doaEnable;
+	}
+	public Integer getDoaCount() {
+		return doaCount;
+	}
+	public void setDoaCount(Integer doaCount) {
+		this.doaCount = doaCount;
 	}
 }

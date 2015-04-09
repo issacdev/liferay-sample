@@ -6,31 +6,28 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import com.dbs.past.db.bean.UserConfig;
-import com.dbs.past.db.bean.UtTxn;
+import com.dbs.past.db.bean.constants.RecordStatusType;
 import com.dbs.past.db.bean.constants.UserConfigConstant;
-import com.dbs.past.db.service.IUserConfigService;
-import com.dbs.past.db.service.IUtTxnService;
+import com.dbs.past.db.bean.constants.UserType;
 import com.dbs.portal.ui.component.application.IApplication;
 import com.dbs.portal.ui.component.comboBox.ComboBoxItem;
+import com.dbs.portal.ui.component.data.TableDBDataProvider;
 import com.dbs.portal.ui.component.view.BaseController;
 import com.dbs.portal.ui.component.view.BaseEnquiryView;
+import com.dbs.portal.ui.component.view.ITableResultView;
 import com.dbs.portal.ui.component.view.IWindow;
 import com.liferay.portal.model.User;
-import com.liferay.portal.model.UserGroup;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Window;
 
 
 public class MakerController extends BaseController {
-
 	
 	private Logger logger = Logger.getLogger(this.getClass());
-	private IUserConfigService userConfigService;
-	private IUtTxnService utTxnService;
 	
 	private User user;
-	
 	private UserConfig userConfig = null;
+	private ControllerUtil controllerUtil;
 	
 	public IWindow getView() {
 		return view;
@@ -46,58 +43,61 @@ public class MakerController extends BaseController {
 	
 	private void initDataTypeList(){
 		
-		BaseEnquiryView enquiryView = (BaseEnquiryView) view.getView("MakerEnquiryView");
+		BaseEnquiryView enquiryView = (BaseEnquiryView) view.getView("makerEnquiryView");
 		ComboBox box = (ComboBox)enquiryView.getComponent(UserConfigConstant.DATA_TYPE);
+		box.setValue(new ComboBoxItem("",""));
+		box.setData(null);
 		box.setNullSelectionAllowed(false);
 		
-		User user = (User) ((IApplication) ((Window) getView()).getApplication()).getCurrentUser();
+		user = (User) ((IApplication) ((Window) getView()).getApplication()).getCurrentUser();
 		
-		try{
-			for(UserGroup userGroup : user.getUserGroups()){
-				
-				List<UserConfig> userConfigList = userConfigService.getUserConfigList(userGroup.getName(), "M");
-				
-				for(UserConfig config: userConfigList){
-					ComboBoxItem item = new ComboBoxItem(config.getDataType(), config);
-					
-					if(box.getValue() == null){
-						box.setValue(item);
-					}
-					
-					box.addItem(item);
-				}
-			}
-		}
-		catch(Exception e){
-			logger.error(e);
-		}		
+		controllerUtil.initDataTypeList(user, box, UserType.MAKER);
+		
 	}
 	
 	public List<Map<String, Object>> getRecord(String dataType){
 		
-		if(UserConfigConstant.UDMA_UT.equalsIgnoreCase(dataType)){
-			List<UtTxn> dataList = utTxnService.getAll();
-			return utTxnService.beanToMap(dataList);
-		}
-		
-		return null;
+		return controllerUtil.getRecord(dataType, RecordStatusType.UPLOADED);
 	}
 	
+	public void refreshtable(){
+		
+		ITableResultView resultView = (ITableResultView) view.getView(userConfig.getTableView());
+		
+		if(resultView != null){
+			List<Map<String, Object>> resultList = getRecord(userConfig.getDataType());
+			
+			if(resultList != null && resultList.size() > 0){
+				TableDBDataProvider dataProvider = new TableDBDataProvider();
+				dataProvider.setApplication((IApplication) ((Window) view).getApplication());
+				dataProvider.setData(resultList);
+				dataProvider.setDataColumnList(resultView.getVisibleColumnHeader());
+				dataProvider.setPagedTableParameterMap(resultView.getPagedTableParameterMap());
+				resultView.updateContent(dataProvider.getDataContainer());
+				                     
+				resultView.setVisible(true);
+			}
+			else{
+				resultView.setVisible(false);
+				showMessage("past.submit.norecord");
+			}
+		}
+	}
+		
+	public void resetTableView(){
+		controllerUtil.resetTableView(view, userConfig.getTableView());
+	}
 	
+	public void showMessage(String msgKey){
+		controllerUtil.showMessage(this, view, msgKey);
+	}
+
 	public Logger getLogger() {
 		return logger;
 	}
 
 	public void setLogger(Logger logger) {
 		this.logger = logger;
-	}
-
-	public IUserConfigService getUserConfigService() {
-		return userConfigService;
-	}
-
-	public void setUserConfigService(IUserConfigService userConfigService) {
-		this.userConfigService = userConfigService;
 	}
 
 	public User getUser() {
@@ -112,10 +112,15 @@ public class MakerController extends BaseController {
 		return userConfig;
 	}
 
-	public void setUtTxnService(IUtTxnService utTxnService) {
-		this.utTxnService = utTxnService;
+	public void setControllerUtil(ControllerUtil controllerUtil) {
+		this.controllerUtil = controllerUtil;
 	}
 
+	public void setUserConfig(UserConfig userConfig) {
+		this.userConfig = userConfig;
+	}
+
+	
 	
 	
 }

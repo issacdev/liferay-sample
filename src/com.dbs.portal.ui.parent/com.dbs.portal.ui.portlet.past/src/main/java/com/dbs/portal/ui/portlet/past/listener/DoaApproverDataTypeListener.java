@@ -6,23 +6,21 @@ import org.apache.log4j.Logger;
 
 import com.dbs.past.db.bean.UserConfig;
 import com.dbs.past.db.bean.constants.UserConfigConstant;
-import com.dbs.portal.ui.component.comboBox.ComboBoxItem;
 import com.dbs.portal.ui.component.view.BaseEnquiryView;
 import com.dbs.portal.ui.component.view.IController;
 import com.dbs.portal.ui.component.view.IInit;
 import com.dbs.portal.ui.component.view.IWindow;
-import com.dbs.portal.ui.portlet.past.control.CheckerController;
+import com.dbs.portal.ui.portlet.past.control.DoaApproverController;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.Upload;
 
-public class CheckerDataTypeChangeListener implements IInit, ValueChangeListener {
+public class DoaApproverDataTypeListener implements IInit, ValueChangeListener {
 
 	private Logger logger = Logger.getLogger(this.getClass());
 	
 	private IWindow view;
 	private IController control;
+	private String viewName;
 	
 	@Override
 	public void setView(IWindow view) {
@@ -33,19 +31,22 @@ public class CheckerDataTypeChangeListener implements IInit, ValueChangeListener
 	public void setControl(IController control) {
 		this.control = control;
 	}
+	
+	public void setViewName(String viewName) {
+		this.viewName = viewName;
+	}
 
 	@Override
 	public void valueChange(ValueChangeEvent event) {
-		
-		System.out.println("########## ");
-		
-		BaseEnquiryView enquiryView = (BaseEnquiryView) view.getView("CheckerEnquiryView");
-		CheckerController checkerController = (CheckerController)control;
+	
+		BaseEnquiryView enquiryView = (BaseEnquiryView) view.getView(viewName);
+		DoaApproverController controller = (DoaApproverController)control;
 		
 		Map<String, Object> criteriaMap = enquiryView.submit(false);
 		UserConfig userConfig = (UserConfig)criteriaMap.get(UserConfigConstant.DATA_TYPE);
-		checkerController.setUserConfig(userConfig);
+		controller.setUserConfig(userConfig);
 		
-		checkerController.resetTableView();
+		controller.resetTableView();
 	}
+
 }
